@@ -152,6 +152,109 @@ SARATHI Calendar
 
 <script>
 
+    async function loadEvents(){
+
+        let response = await fetch('/events')
+
+        let data = await response.json()
+
+        let eventsContainer =
+            document.getElementById('eventsContainer')
+
+        eventsContainer.innerHTML = ""
+
+        if (data.events.length === 0){
+
+            eventsContainer.innerHTML = `
+                <p class="empty-state">
+                    No events scheduled
+                </p>
+            `
+
+            return;
+        }
+
+        data.events.forEach(event => {
+
+            let eventCard =
+                document.createElement('div')
+
+            eventCard.className = "event-card"
+
+            eventCard.innerHTML = `
+
+                <div>
+
+                    <h3>${event.title}</h3>
+
+                    <small class="event-date">
+                        ${event.event_date}
+                    </small>
+
+                </div>
+
+                <button
+                    onclick="deleteEvent(${event.id})"
+                >
+                    Delete
+                </button>
+            `
+
+            eventsContainer.appendChild(eventCard)
+
+        })
+    }
+
+    async function addEvent(){
+
+        let title =
+            document.getElementById('eventTitle')
+            .value
+
+        let date =
+            document.getElementById('eventDate')
+            .value
+
+        if (!title || !date){
+            return;
+        }
+
+        await fetch('/events', {
+
+            method:'POST',
+
+            headers:{
+                'Content-Type':'application/json'
+            },
+
+            body:JSON.stringify({
+                title:title,
+                event_date:date
+            })
+
+        })
+
+        document.getElementById('eventTitle')
+            .value = ""
+
+        document.getElementById('eventDate')
+            .value = ""
+
+        loadEvents()
+    }
+
+    async function deleteEvent(id){
+
+        await fetch(`/events/${id}`, {
+
+            method:'DELETE'
+        })
+
+        loadEvents()
+    }
+
+    loadEvents()
+
 </script>
 
 {% endblock %}
