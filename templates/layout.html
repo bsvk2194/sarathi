@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>
+        {% block title %}{% endblock %}
+    </title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial,sans-serif;
+        }
+
+        body{
+            background:#05070d;
+            color:white;
+            display:flex;
+            min-height:100vh;
+        }
+
+        .sidebar{
+            width:250px;
+            background:#0b1220;
+            padding:30px 20px;
+            height:100vh;
+            position:sticky;
+            top:0;
+
+            border-right:1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo{
+            color:#ff7722;
+            font-size:36px;
+            margin-bottom:40px;
+            text-shadow:0 0 10px #ff7722;
+        }
+
+        .nav-links{
+            display:flex;
+            flex-direction:column;
+            gap:15px;
+        }
+
+        .nav-links a{
+            text-decoration:none;
+            color:white;
+
+            padding:15px;
+            border-radius:12px;
+
+            background:#111827;
+
+            transition:0.3s;
+        }
+
+        .nav-links a:hover{
+            background:#ff7722;
+            color:black;
+
+            box-shadow:0 0 15px #f4c430;
+        }
+
+        .main{
+            flex:1;
+            padding:50px;
+            overflow-y:auto;
+        }
+
+    </style>
+
+    {% block extra_css %}{% endblock %}
+
+</head>
+
+<body>
+
+    <div class="sidebar">
+
+        <h1 class="logo">
+            SARATHI
+        </h1>
+
+        <div class="nav-links">
+
+            <a href="/dashboard">
+                Home
+            </a>
+
+            <a href="/tasks-page">
+                Tasks
+            </a>
+
+            <a href="/notes-page">
+                Notes
+            </a>
+            
+            <a href="/calendar-page">
+                Calendar
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="main">
+
+        {% block content %}{% endblock %}
+
+    </div>
+
+    {% block scripts %}{% endblock %}
+
+</body>
+
+</html>

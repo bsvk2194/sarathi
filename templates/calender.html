@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+
+{% block title %}
+SARATHI Calendar
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .main h1{
+        color:#ff7722;
+        font-size:48px;
+        margin-bottom:40px;
+        text-shadow:0 0 15px #ff7722;
+    }
+
+    .card{
+        background:rgba(255,255,255,0.05);
+
+        border:1px solid rgba(255,255,255,0.1);
+
+        border-radius:20px;
+
+        padding:30px;
+
+        margin-bottom:30px;
+
+        backdrop-filter:blur(10px);
+
+        box-shadow:0 0 20px rgba(244,196,48,0.12);
+    }
+
+    .event-input{
+        display:flex;
+        gap:15px;
+        margin-top:20px;
+    }
+
+    input{
+        flex:1;
+
+        padding:18px;
+
+        border:none;
+
+        border-radius:12px;
+
+        font-size:20px;
+
+        background:#111827;
+
+        color:white;
+
+        outline:none;
+    }
+
+    input:focus{
+        border:2px solid #ff7722;
+    }
+
+    button{
+        padding:16px 24px;
+
+        border:none;
+
+        border-radius:12px;
+
+        background:#f4c430;
+
+        color:black;
+
+        font-size:18px;
+
+        font-weight:bold;
+
+        cursor:pointer;
+
+        transition:0.3s;
+    }
+
+    button:hover{
+        transform:scale(1.05);
+
+        box-shadow:0 0 15px #f4c430;
+    }
+
+    .event-card{
+        background:#111827;
+
+        padding:20px;
+
+        border-radius:15px;
+
+        margin-top:20px;
+
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }
+
+    .event-date{
+        color:#9ca3af;
+        margin-top:8px;
+        display:block;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>Calendar</h1>
+
+<div class="card">
+
+    <h2>Add Event</h2>
+
+    <div class="event-input">
+
+        <input
+            type="text"
+            id="eventTitle"
+            placeholder="Event title"
+        >
+
+        <input
+            type="date"
+            id="eventDate"
+        >
+
+        <button onclick="addEvent()">
+            Add
+        </button>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>Upcoming Events</h2>
+
+    <div id="eventsContainer"></div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+</script>
+
+{% endblock %}

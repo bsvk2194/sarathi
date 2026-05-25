@@ -1,0 +1,293 @@
+{% extends "layout.html" %}
+
+{% block title %}
+SARATHI Notes
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .main h1{
+        color:#ff7722;
+        font-size:48px;
+        margin-bottom:40px;
+        text-shadow:0 0 15px #ff7722;
+    }
+
+    h2{
+        margin-top:40px;
+        margin-bottom:20px;
+        font-size:32px;
+    }
+
+    .card{
+        background:rgba(255,255,255,0.05);
+        border:1px solid rgba(255,255,255,0.1);
+        border-radius:20px;
+        padding:30px;
+        margin-bottom:30px;
+
+        backdrop-filter:blur(10px);
+
+        box-shadow:0 0 20px rgba(244,196,48,0.12);
+    }
+
+    button{
+        padding:16px 24px;
+        border:none;
+        border-radius:12px;
+
+        background:#f4c430;
+        color:black;
+
+        font-size:20px;
+
+        cursor:pointer;
+
+        transition:0.3s;
+
+        font-weight:bold;
+    }
+
+    button:hover{
+        transform:scale(1.05);
+
+        box-shadow:0 0 15px #f4c430;
+    }
+
+    .task-buttons{
+        display:flex;
+        gap:10px;
+    }
+
+    .delete-btn{
+        background:#ff4d4d;
+        color:white;
+    }
+
+    .note-input{
+        display:flex;
+        gap:15px;
+        margin-top:20px;
+    }
+
+    textarea{
+        flex:1;
+        padding:18px;
+        border:none;
+        border-radius:12px;
+
+        font-size:20px;
+
+        background:#111827;
+        color:white;
+
+        outline:none;
+
+        resize:none;
+        min-height:120px;
+    }
+
+    textarea:focus{
+        border:2px solid #ff7722;
+    }
+
+    .note-card{
+        background:#111827;
+
+        padding:20px;
+
+        border-radius:15px;
+
+        margin-top:20px;
+
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+
+        gap:20px;
+    }
+
+    .note-card p{
+        font-size:20px;
+        line-height:1.5;
+        white-space:pre-wrap;
+    }
+
+    .note-time{
+        color:#9ca3af;
+        font-size:14px;
+        margin-top:8px;
+        display:block;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>Notes</h1>
+
+<div class="card">
+
+    <h2>Notes</h2>
+
+    <div class="note-input">
+
+        <textarea
+            id="noteInput"
+            placeholder="Write a note..."
+        ></textarea>
+
+        <button onclick="addNote()">
+            Save Note
+        </button>
+
+    </div>
+
+    <div id="notesContainer"></div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+    async function loadNotes(){
+
+        let response = await fetch('/notes')
+
+        let data = await response.json()
+
+        let notesContainer =
+            document.getElementById('notesContainer')
+
+        notesContainer.innerHTML = ""
+
+        if (data.notes.length === 0){
+
+            notesContainer.innerHTML = `
+                <p class="empty-state">
+                    No notes yet
+                </p>
+            `
+
+            return;
+        }
+
+        data.notes.forEach(note => {
+
+            let noteCard = document.createElement('div')
+
+            noteCard.className = "note-card"
+
+            noteCard.innerHTML = `
+
+                <div>
+
+                    <p>${note.content}</p>
+
+                    <small class="note-time">
+                        ${new Date(note.created_at)
+                            .toLocaleString()}
+                    </small>
+
+                </div>
+
+                <div class="task-buttons">
+
+                    <button
+                        onclick="editNote(${note.id},
+                        '${note.content}')"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteNote(${note.id})"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+            `
+
+            notesContainer.appendChild(noteCard)
+
+        })
+    }
+
+    async function addNote(){
+
+        let noteInput =
+            document.getElementById('noteInput')
+
+        let noteText = noteInput.value.trim()
+
+        if (!noteText){
+            return;
+        }
+
+        await fetch('/notes', {
+
+            method:'POST',
+
+            headers:{
+                'Content-Type':'application/json'
+            },
+
+            body:JSON.stringify({
+                note:noteText
+            })
+        })
+
+        noteInput.value = ""
+
+        loadNotes()
+    }
+
+    async function deleteNote(noteId){
+
+        await fetch(`/notes/${noteId}`, {
+
+            method:'DELETE'
+        })
+
+        loadNotes()
+    }
+
+    async function editNote(noteId, oldContent){
+
+        let newContent =
+            prompt("Edit note:", oldContent)
+
+        if (!newContent){
+            return;
+        }
+
+        await fetch(`/notes/${noteId}`, {
+
+            method:'PUT',
+
+            headers:{
+                'Content-Type':'application/json'
+            },
+
+            body:JSON.stringify({
+                content:newContent
+            })
+        })
+
+        loadNotes()
+    }
+
+    loadNotes()
+
+</script>
+
+{% endblock %}

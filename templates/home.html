@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}
+SARATHI Home
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .hero{
+        background:rgba(255,255,255,0.05);
+
+        padding:40px;
+
+        border-radius:20px;
+
+        border:1px solid rgba(255,255,255,0.1);
+
+        box-shadow:0 0 20px rgba(244,196,48,0.15);
+    }
+
+    .hero h1{
+        font-size:50px;
+        margin-bottom:20px;
+        color:#ff7722;
+    }
+
+    .hero p{
+        font-size:22px;
+        color:#9ca3af;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+
+    <h1>
+        Welcome back, Karthik.
+    </h1>
+
+    <p>
+        Your personal AI operating system is online.
+    </p>
+
+</div>
+
+{% endblock %}

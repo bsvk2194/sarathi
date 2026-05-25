@@ -1,0 +1,476 @@
+{% extends "layout.html" %}
+
+{% block title %}
+SARATHI Tasks
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .main h1{
+        color:#ff7722;
+        font-size:48px;
+        margin-bottom:40px;
+        text-shadow:0 0 15px #ff7722;
+    }
+
+    h2{
+        margin-top:40px;
+        margin-bottom:20px;
+        font-size:32px;
+    }
+
+    .card{
+        background:rgba(255,255,255,0.05);
+        border:1px solid rgba(255,255,255,0.1);
+        border-radius:20px;
+        padding:30px;
+        margin-bottom:30px;
+
+        backdrop-filter:blur(10px);
+
+        box-shadow:0 0 20px rgba(244,196,48,0.12);
+    }
+
+    .input-area{
+        display:flex;
+        gap:15px;
+        margin-top:20px;
+    }
+
+    input{
+        flex:1;
+        padding:18px;
+        border:none;
+        border-radius:12px;
+        font-size:22px;
+
+        background:#111827;
+        color:white;
+
+        outline:none;
+    }
+
+    input:focus{
+        border:2px solid #ff7722;
+    }
+
+    button{
+        padding:16px 24px;
+        border:none;
+        border-radius:12px;
+
+        background:#f4c430;
+        color:black;
+
+        font-size:20px;
+
+        cursor:pointer;
+
+        transition:0.3s;
+
+        font-weight:bold;
+    }
+
+    button:hover{
+        transform:scale(1.05);
+
+        box-shadow:0 0 15px #f4c430;
+    }
+
+    ul{
+        list-style:none;
+        margin-top:20px;
+    }
+
+    li{
+        background:#111827;
+
+        padding:20px;
+        margin-bottom:15px;
+
+        border-radius:15px;
+
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+
+        font-size:22px;
+    }
+
+    .task-left{
+        display:flex;
+        align-items:center;
+        gap:15px;
+    }
+
+    .completed{
+        text-decoration:line-through;
+        opacity:0.5;
+    }
+
+    .task-buttons{
+        display:flex;
+        gap:10px;
+    }
+
+    .delete-btn{
+        background:#ff4d4d;
+        color:white;
+    }
+
+    .complete-btn{
+        background:#f4c430;
+        color:black;
+    }
+
+    .stats{
+        display:grid;
+
+        grid-template-columns:
+            repeat(auto-fit,minmax(220px,1fr));
+
+        gap:20px;
+    }
+
+    .stat-box{
+        background:#111827;
+
+        padding:25px;
+
+        border-radius:15px;
+
+        text-align:center;
+    }
+
+    .stat-box h3{
+        color:#ff7722;
+        margin-bottom:10px;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<h1>SARATHI Tasks</h1>
+
+<div class="card">
+
+    <h2>Add Task</h2>
+
+    <div class="input-area">
+
+        <input
+            type="text"
+            id="taskInput"
+            placeholder="Enter task"
+        >
+
+        <button onclick="addTask()">
+            Add
+        </button>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>System Stats</h2>
+
+    <div class="stats">
+
+        <div class="stat-box">
+            <h3>Server</h3>
+            <p>ONLINE</p>
+        </div>
+
+        <div class="stat-box">
+            <h3>Database</h3>
+            <p>CONNECTED</p>
+        </div>
+
+        <div class="stat-box">
+            <h3>Tasks</h3>
+            <p id="taskCount">0</p>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <div class="top-controls">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search tasks..."
+            onkeyup="loadTasks()"
+        />
+
+        <select
+            id="sortSelect"
+            onchange="loadTasks()"
+        >
+
+            <option value="newest">
+                Newest First
+            </option>
+
+            <option value="oldest">
+                Oldest First
+            </option>
+
+        </select>
+
+    </div>
+
+    <div class="filters">
+
+        <button onclick="filterTasks('all')">
+            All
+        </button>
+
+        <button onclick="filterTasks('active')">
+            Active
+        </button>
+
+        <button onclick="filterTasks('completed')">
+            Completed
+        </button>
+
+    </div>
+
+    <h2>Tasks</h2>
+
+    <ul id="taskList"></ul>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+    let currentFilter = "all";
+
+    function filterTasks(filter) {
+
+        currentFilter = filter;
+
+        loadTasks();
+    }
+
+    async function loadTasks(){
+
+        let response = await fetch('/tasks')
+
+        let data = await response.json()
+
+        let taskList = document.getElementById('taskList')
+
+        let taskCount = document.getElementById('taskCount')
+
+        taskList.innerHTML = ""
+
+        let searchValue = document
+            .getElementById('searchInput')
+            .value
+            .toLowerCase()
+
+        let sortValue = document
+            .getElementById('sortSelect')
+            .value
+
+        data.tasks.sort((a, b) => {
+
+            if (sortValue === "newest") {
+
+                return new Date(b.created_at)
+                    - new Date(a.created_at)
+            }
+
+            return new Date(a.created_at)
+                - new Date(b.created_at)
+        })
+
+        if (data.tasks.length === 0) {
+
+            taskList.innerHTML = `
+                <p class="empty-state">
+                    No tasks yet
+                </p>
+            `
+
+            return;
+        }
+
+        let visibleTasks = 0
+
+        data.tasks.forEach(task => {
+
+            if (currentFilter === "active" && task.completed){
+                return;
+            }
+
+            if (currentFilter === "completed" && !task.completed){
+                return;
+            }
+
+            if (!task.task.toLowerCase().includes(searchValue)){
+                return;
+            }
+
+            visibleTasks++
+
+            let li = document.createElement('li')
+
+            let completedClass =
+                task.completed ? "completed" : ""
+
+            li.innerHTML = `
+
+                <div class="task-left">
+
+                    <span class="${completedClass}">
+
+                        ${task.task}
+
+                        <br>
+
+                        <small class="task-time">
+
+                            ${new Date(task.created_at)
+                                .toLocaleString()}
+
+                        </small>
+
+                    </span>
+
+                </div>
+
+                <div class="task-buttons">
+
+                    <button
+                        class="complete-btn"
+                        onclick="toggleTask(${task.id})"
+                    >
+                        ✓
+                    </button>
+
+                    <button
+                        onclick="editTask(${task.id},
+                        '${task.task}')"
+                    >
+                        Edit
+                    </button>
+
+                    <button
+                        class="delete-btn"
+                        onclick="deleteTask(${task.id})"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+            `
+
+            taskList.appendChild(li)
+
+        })
+
+        if (visibleTasks === 0){
+
+            taskList.innerHTML = `
+                <p class="empty-state">
+                    No matching tasks
+                </p>
+            `
+        }
+
+        taskCount.innerText = visibleTasks
+    }
+
+    async function addTask(){
+
+        let input =
+            document.getElementById('taskInput')
+
+        let task = input.value
+
+        if(task === "") return
+
+        await fetch('/tasks', {
+
+            method:'POST',
+
+            headers:{
+                'Content-Type':'application/json'
+            },
+
+            body:JSON.stringify({
+                task:task
+            })
+
+        })
+
+        input.value = ""
+
+        loadTasks()
+    }
+
+    async function toggleTask(id){
+
+        await fetch(`/tasks/${id}/toggle`, {
+            method:'PUT'
+        })
+
+        loadTasks()
+    }
+
+    async function editTask(id, oldTask){
+
+        let newTask =
+            prompt("Edit task:", oldTask)
+
+        if(newTask === null
+            || newTask.trim() === "")
+            return
+
+        await fetch(`/tasks/${id}`, {
+
+            method:'PATCH',
+
+            headers:{
+                'Content-Type':'application/json'
+            },
+
+            body:JSON.stringify({
+                task:newTask
+            })
+
+        })
+
+        loadTasks()
+    }
+
+    async function deleteTask(id){
+
+        await fetch(`/tasks/${id}`, {
+            method:'DELETE'
+        })
+
+        loadTasks()
+    }
+
+    loadTasks()
+
+</script>
+
+{% endblock %}
