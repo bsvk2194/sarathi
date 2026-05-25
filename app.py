@@ -323,6 +323,91 @@ def delete_task(task_id):
         "message": "Task deleted"
     })
 
+#get events
+@app.route('/events', methods=['GET'])
+def get_events():
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT * FROM events
+        ORDER BY event_date ASC
+    """)
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    events = []
+
+    for row in rows:
+
+        events.append({
+            "id": row[0],
+            "title": row[1],
+            "event_date": row[2],
+            "created_at": row[3]
+        })
+
+    return jsonify({
+        "events": events
+    })
+
+#add event
+@app.route('/events', methods=['POST'])
+def add_event():
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({
+            "error":"Missing data"
+        }), 400
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO events
+        (title, event_date)
+        VALUES (?, ?)
+        """,
+        (
+            data["title"],
+            data["event_date"]
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "message":"Event added"
+    })
+
+#delete event
+@app.route('/events/<int:event_id>',
+methods=['DELETE'])
+
+def delete_event(event_id):
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM events WHERE id=?",
+        (event_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "message":"Event deleted"
+    })
+
 # Start server
 if __name__ == '__main__':
 
