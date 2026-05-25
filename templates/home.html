@@ -89,7 +89,7 @@ SARATHI Home
 
 <div class="hero">
 
-    <h1>
+    <h1 id="greeting">
         Welcome back, Karthik.
     </h1>
 
@@ -173,6 +173,32 @@ SARATHI Home
         return eventDate.toLocaleDateString()
     }
 
+    function updateGreeting(){
+
+        let hour =
+            new Date().getHours()
+
+        let greeting = "Welcome"
+
+        if (hour < 12){
+
+            greeting = "Good Morning"
+
+        } else if (hour < 18){
+
+            greeting = "Good Afternoon"
+
+        } else {
+
+            greeting = "Good Evening"
+        }
+
+        document.getElementById(
+            'greeting'
+        ).innerText =
+            `${greeting}, Karthik.`
+    }
+
     async function loadDashboard(){
 
         let response =
@@ -219,6 +245,8 @@ SARATHI Home
 
         })
     }
+
+    updateGreeting()
 
     loadDashboard()
 
