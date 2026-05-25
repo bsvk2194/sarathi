@@ -83,6 +83,77 @@ def health():
     })
 
 
+@app.route('/dashboard-data')
+def dashboard_data():
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM tasks"
+    )
+
+    total_tasks = cursor.fetchone()[0]
+
+    cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM tasks
+        WHERE completed=1
+        """
+    )
+
+    completed_tasks = cursor.fetchone()[0]
+
+    cursor.execute(
+        """
+        SELECT title, event_date
+        FROM events
+        ORDER BY event_date ASC
+        LIMIT 3
+        """
+    )
+
+    upcoming_events = cursor.fetchall()
+
+    cursor.execute(
+        """
+        SELECT content
+        FROM notes
+        ORDER BY created_at DESC
+        LIMIT 1
+        """
+    )
+
+    latest_note = cursor.fetchone()
+
+    conn.close()
+
+    events = []
+
+    for event in upcoming_events:
+
+        events.append({
+            "title": event[0],
+            "date": event[1]
+        })
+
+    return jsonify({
+
+        "total_tasks": total_tasks,
+
+        "completed_tasks": completed_tasks,
+
+        "pending_tasks":
+            total_tasks - completed_tasks,
+
+        "events": events,
+
+        "latest_note":
+            latest_note[0]
+            if latest_note else "No notes yet"
+    })
+
 # Get all notes
 @app.route('/notes', methods=['GET'])
 def get_notes():
@@ -388,9 +459,7 @@ def add_event():
     })
 
 #delete event
-@app.route('/events/<int:event_id>',
-methods=['DELETE'])
-
+@app.route('/events/<int:event_id>',methods=['DELETE'])
 def delete_event(event_id):
 
     conn = sqlite3.connect(DATABASE)
