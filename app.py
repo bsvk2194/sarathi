@@ -521,6 +521,48 @@ def assistant_command():
             "response":
             f"Task added: {task_text}"
         })
+    
+    if command.startswith("add event"):
+
+        event_text = command.replace(
+            "add event",
+            ""
+        ).strip()
+
+        parts = event_text.rsplit(" ", 1)
+
+        if len(parts) < 2:
+
+            return jsonify({
+                "response":
+                "Use format: add event title YYYY-MM-DD"
+            })
+
+        title = parts[0]
+        event_date = parts[1]
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO events
+            (title, event_date)
+            VALUES (?, ?)
+            """,
+            (
+                title,
+                event_date
+            )
+        )
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "response":
+            f"Event added: {title}"
+        })
 
     if "hello" in command:
 
