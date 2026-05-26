@@ -599,33 +599,33 @@ def assistant_command():
             (f"%{task_name.lower()}%",)
         )
 
-    task = cursor.fetchone()
+        task = cursor.fetchall()
 
-    if not task:
+        if not task:
 
+            conn.close()
+
+            return jsonify({
+                "response":
+                "Task not found."
+            })
+
+        cursor.execute(
+            """
+            UPDATE tasks
+            SET completed=1
+            WHERE id=?
+            """,
+            (task[0],)
+        )
+
+        conn.commit()
         conn.close()
 
         return jsonify({
             "response":
-            "Task not found."
+            f"Task completed: {task_name}"
         })
-
-    cursor.execute(
-        """
-        UPDATE tasks
-        SET completed=1
-        WHERE id=?
-        """,
-        (task[0],)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return jsonify({
-        "response":
-        f"Task completed: {task_name}"
-    })
 
     if "hello" in command:
 
