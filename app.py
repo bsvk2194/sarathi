@@ -726,6 +726,44 @@ def assistant_command():
             "response":
             f"Pending Tasks:\n\n{task_list}"
         })
+    
+    if command == "show notes":
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT content
+            FROM notes
+            ORDER BY created_at DESC
+            LIMIT 5
+            """
+        )
+
+        notes = cursor.fetchall()
+
+        conn.close()
+
+        if not notes:
+
+            return jsonify({
+                "response":
+                "No notes found."
+            })
+
+        notes_list = ""
+
+        for i, note in enumerate(notes, start=1):
+
+            notes_list += (
+                f"{i}. {note[0]}\n"
+            )
+
+        return jsonify({
+            "response":
+            f"Recent Notes:\n\n{notes_list}"
+        })
 
     if "hello" in command:
 
