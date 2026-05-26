@@ -599,7 +599,7 @@ def assistant_command():
             (f"%{task_name.lower()}%",)
         )
 
-        task = cursor.fetchall()
+        task = cursor.fetchone()
 
         if not task:
 
