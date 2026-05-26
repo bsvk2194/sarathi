@@ -593,9 +593,10 @@ def assistant_command():
             """
             SELECT id
             FROM tasks
-            WHERE LOWER(task)=?
+            WHERE LOWER(task)
+            LIKE ?
             """,
-            (task_name.lower(),)
+            (f"%{task_name.lower()}%",)
         )
 
     task = cursor.fetchone()
