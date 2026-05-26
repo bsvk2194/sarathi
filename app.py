@@ -578,6 +578,53 @@ def assistant_command():
             "response":
             f"Event added: {title}"
         })
+    
+    if command.startswith("complete task"):
+
+        task_name = command.replace(
+            "complete task",
+            ""
+        ).strip()
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT id
+            FROM tasks
+            WHERE LOWER(task)=?
+            """,
+            (task_name.lower(),)
+        )
+
+    task = cursor.fetchone()
+
+    if not task:
+
+        conn.close()
+
+        return jsonify({
+            "response":
+            "Task not found."
+        })
+
+    cursor.execute(
+        """
+        UPDATE tasks
+        SET completed=1
+        WHERE id=?
+        """,
+        (task[0],)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "response":
+        f"Task completed: {task_name}"
+    })
 
     if "hello" in command:
 
