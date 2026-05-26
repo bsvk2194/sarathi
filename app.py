@@ -486,7 +486,7 @@ def assistant_command():
 
     data = request.get_json()
 
-    command = data.get("command", "").lower()
+    command = data.get("command","").lower().strip()
 
     if command.startswith("add task"):
 
