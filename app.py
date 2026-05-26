@@ -640,6 +640,55 @@ def assistant_command():
             "response":
             f"Task completed: {task_name}"
         })
+    
+    if command.startswith("add note"):
+
+            note_text = command.replace(
+                "add note",
+                ""
+            ).strip()
+
+            if note_text == "":
+
+                return jsonify({
+                    "response":
+                    "Please provide a note."
+                })
+
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                INSERT INTO notes (content)
+                VALUES (?)
+                """,
+                (note_text,)
+            )
+
+            conn.commit()
+
+            cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM notes
+                """
+            )
+
+            total_notes = cursor.fetchone()[0]
+
+            conn.close()
+
+            return jsonify({
+                "response":
+                f"""
+        Note saved:
+        {note_text}
+
+        Total notes:
+        {total_notes}
+        """
+            })
 
     if "hello" in command:
 
