@@ -81,6 +81,49 @@ SARATHI Home
         color:#d1d5db;
     }
 
+    .assistant-card{
+
+        background:rgba(255,255,255,0.05);
+
+        border:1px solid rgba(255,255,255,0.1);
+
+        border-radius:20px;
+
+        padding:30px;
+
+        margin-top:30px;
+
+        box-shadow:0 0 20px rgba(244,196,48,0.08);
+    }
+
+    .assistant-card h2{
+
+        color:#f4c430;
+
+        margin-bottom:20px;
+    }
+
+    .assistant-input{
+
+        display:flex;
+
+        gap:15px;
+
+        margin-bottom:20px;
+    }
+
+    .assistant-input input{
+
+        flex:1;
+    }
+
+    #assistantResponse{
+
+        color:#d1d5db;
+
+        font-size:18px;
+    }
+
 </style>
 
 {% endblock %}
@@ -134,6 +177,30 @@ SARATHI Home
         </p>
 
     </div>
+
+</div>
+
+<div class="assistant-card">
+
+    <h2>Assistant Command</h2>
+
+    <div class="assistant-input">
+
+        <input
+            type="text"
+            id="assistantCommand"
+            placeholder="Tell SARATHI what to do..."
+        >
+
+        <button onclick="runCommand()">
+            Execute
+        </button>
+
+    </div>
+
+    <p id="assistantResponse">
+        Awaiting instruction...
+    </p>
 
 </div>
 
@@ -249,6 +316,39 @@ SARATHI Home
             eventsPreview.appendChild(div)
 
         })
+    }
+
+    async function runCommand(){
+
+        let command =
+            document.getElementById(
+                'assistantCommand'
+            ).value
+
+        if (!command){
+            return;
+        }
+
+        let response =
+            await fetch('/assistant-command', {
+
+                method:'POST',
+
+                headers:{
+                    'Content-Type':'application/json'
+                },
+
+                body:JSON.stringify({
+                    command:command
+                })
+            })
+
+        let data = await response.json()
+
+        document.getElementById(
+            'assistantResponse'
+        ).innerText =
+            data.response
     }
 
     updateGreeting()

@@ -477,6 +477,33 @@ def delete_event(event_id):
         "message":"Event deleted"
     })
 
+#assistant command route
+@app.route('/assistant-command', methods=['POST'])
+def assistant_command():
+
+    data = request.get_json()
+
+    command = data.get("command", "").lower()
+
+    if "hello" in command:
+
+        return jsonify({
+            "response":
+            "Hello Karthik. SARATHI online."
+        })
+
+    if "status" in command:
+
+        return jsonify({
+            "response":
+            "All systems operational."
+        })
+
+    return jsonify({
+        "response":
+        "Command not recognized yet."
+    })
+
 # Start server
 if __name__ == '__main__':
 
