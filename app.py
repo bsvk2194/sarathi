@@ -544,7 +544,7 @@ def assistant_command():
         title = parts[0]
         event_date = parts[1]
 
-        parsed_date =dateparser.parse(event_date,settings={'TIMEZONE': 'UTC'})
+        parsed_date =dateparser.parse(event_date,settings={'PREFER_DATES_FROM': 'future'})
 
         if parsed_date:
             event_date =parsed_date.strftime("%Y-%m-%d")
