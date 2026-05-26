@@ -485,6 +485,43 @@ def assistant_command():
 
     command = data.get("command", "").lower()
 
+    if command.startswith("add task"):
+
+        task_text = command.replace(
+            "add task",
+            ""
+        ).strip()
+
+        if task_text == "":
+
+            return jsonify({
+                "response":
+                "Please provide a task."
+            })
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO tasks
+            (task, completed)
+            VALUES (?, ?)
+            """,
+            (
+                task_text,
+                0
+            )
+        )
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "response":
+            f"Task added: {task_text}"
+        })
+
     if "hello" in command:
 
         return jsonify({
