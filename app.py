@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, render_template
 import sqlite3
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -539,8 +540,20 @@ def assistant_command():
             })
 
         title = parts[0]
-        event_date = parts[1]
+        event_date = parts[1].lower()
 
+        if event_date == "today":
+
+            event_date = datetime.now()\
+                .strftime("%Y-%m-%d")
+
+        elif event_date == "tomorrow":
+
+            event_date = (
+                datetime.now()
+                + timedelta(days=1)
+            ).strftime("%Y-%m-%d")
+            
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
 
