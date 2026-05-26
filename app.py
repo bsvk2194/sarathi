@@ -1,3 +1,5 @@
+from asyncio import tasks
+
 from flask import Flask, jsonify, request, render_template
 import sqlite3
 from datetime import datetime, timedelta
@@ -7,6 +9,7 @@ import dateparser
 app = Flask(__name__)
 
 DATABASE = "sarathi.db"
+LAST_TASK_RESULTS = []
 
 
 # Initialize database
@@ -697,7 +700,7 @@ def assistant_command():
 
         cursor.execute(
             """
-            SELECT task
+            SELECT id, task
             FROM tasks
             WHERE completed=0
             """
@@ -713,13 +716,17 @@ def assistant_command():
                 "response":
                 "No pending tasks."
             })
+        
+        global LAST_TASK_RESULTS
+
+        LAST_TASK_RESULTS = tasks
 
         task_list = ""
 
         for i, task in enumerate(tasks, start=1):
 
             task_list += (
-                f"{i}. {task[0]}\n"
+                f"{i}. {task[1]}\n"
             )
 
         return jsonify({
@@ -763,6 +770,76 @@ def assistant_command():
         return jsonify({
             "response":
             f"Recent Notes:\n\n{notes_list}"
+        })
+    
+    if command.startswith("complete the"):
+
+        global LAST_TASK_RESULTS
+
+        if not LAST_TASK_RESULTS:
+
+            return jsonify({
+                "response":
+                "No recent task list found."
+            })
+
+        words = command.split()
+
+        if len(words) < 3:
+
+            return jsonify({
+                "response":
+                "Specify which task."
+            })
+
+        position_word = words[2]
+
+        mapping = {
+            "first":0,
+            "second":1,
+            "third":2,
+            "fourth":3,
+            "fifth":4
+        }
+
+        if position_word not in mapping:
+
+            return jsonify({
+                "response":
+                "Unknown task position."
+            })
+
+        index = mapping[position_word]
+
+        if index >= len(LAST_TASK_RESULTS):
+
+            return jsonify({
+                "response":
+                "Task number out of range."
+            })
+
+        task_id =LAST_TASK_RESULTS[index][0]
+
+        task_name =LAST_TASK_RESULTS[index][1]
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE tasks
+            SET completed=1
+            WHERE id=?
+            """,
+            (task_id,)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "response":
+            f"Completed task: {task_name}"
         })
 
     if "hello" in command:
