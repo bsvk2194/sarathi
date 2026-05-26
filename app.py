@@ -518,13 +518,27 @@ def assistant_command():
         )
 
         conn.commit()
+        cursor.execute(
+            """
+            SELECT COUNT(*)
+            FROM tasks
+            WHERE completed=0
+            """
+        )
+
+        pending_tasks = cursor.fetchone()[0]
         conn.close()
 
         return jsonify({
             "response":
-            f"Task added: {task_text}"
+            f"""
+        Added task:
+        {task_text}
+
+        Pending tasks:
+        {pending_tasks}
+        """
         })
-    
     if command.startswith("add event"):
 
         event_text = command.replace(
@@ -572,25 +586,11 @@ def assistant_command():
         )
 
         conn.commit()
-        cursor.execute(
-            """
-            SELECT COUNT(*)
-            FROM tasks
-            WHERE completed=0
-            """
-        )
-        pending_tasks = cursor.fetchone()[0]
         conn.close()
 
         return jsonify({
             "response":
-            f"""
-        Added task:
-        {task_text}
-
-        Pending tasks:
-        {pending_tasks}
-        """
+            f"Event added: {title}"
         })
     
     if command.startswith("complete task"):
