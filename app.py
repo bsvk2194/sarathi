@@ -689,6 +689,43 @@ def assistant_command():
         {total_notes}
         """
             })
+    
+    if command == "show pending tasks":
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT task
+            FROM tasks
+            WHERE completed=0
+            """
+        )
+
+        tasks = cursor.fetchall()
+
+        conn.close()
+
+        if not tasks:
+
+            return jsonify({
+                "response":
+                "No pending tasks."
+            })
+
+        task_list = ""
+
+        for i, task in enumerate(tasks, start=1):
+
+            task_list += (
+                f"{i}. {task[0]}\n"
+            )
+
+        return jsonify({
+            "response":
+            f"Pending Tasks:\n\n{task_list}"
+        })
 
     if "hello" in command:
 
