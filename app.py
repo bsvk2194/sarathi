@@ -491,6 +491,8 @@ def assistant_command():
 
     command = data.get("command","").lower().strip()
 
+    global LAST_TASK_RESULTS
+
     if command.startswith("add task"):
 
         task_text = command.replace(
@@ -717,7 +719,6 @@ def assistant_command():
                 "No pending tasks."
             })
         
-        global LAST_TASK_RESULTS
 
         LAST_TASK_RESULTS = tasks
 
