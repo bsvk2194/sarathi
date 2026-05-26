@@ -775,8 +775,6 @@ def assistant_command():
     
     if command.startswith("complete the"):
 
-        global LAST_TASK_RESULTS
-
         if not LAST_TASK_RESULTS:
 
             return jsonify({
