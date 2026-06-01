@@ -1,5 +1,6 @@
 from asyncio import tasks
-
+import shutil
+from datetime import datetime
 from flask import Flask, jsonify, request, render_template
 import sqlite3
 from datetime import datetime, timedelta
@@ -47,6 +48,18 @@ def init_db():
     conn.commit()
     conn.close()
 
+
+def create_backup():
+
+    backup_name = (
+        "/storage/emulated/0/SARATHI_SYNC/"
+        f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
+    )
+
+    shutil.copy(
+        "sarathi.db",
+        backup_name
+    )
 
 # Home route
 @app.route('/')
@@ -523,6 +536,7 @@ def assistant_command():
         )
 
         conn.commit()
+        create_backup()
         cursor.execute(
             """
             SELECT COUNT(*)
@@ -591,6 +605,7 @@ def assistant_command():
         )
 
         conn.commit()
+        create_backup()
         conn.close()
 
         return jsonify({
@@ -639,6 +654,7 @@ def assistant_command():
         )
 
         conn.commit()
+        create_backup()
         conn.close()
 
         return jsonify({
@@ -672,7 +688,7 @@ def assistant_command():
             )
 
             conn.commit()
-
+            create_backup()
             cursor.execute(
                 """
                 SELECT COUNT(*)
@@ -834,6 +850,7 @@ def assistant_command():
         )
 
         conn.commit()
+        create_backup()
         conn.close()
 
         return jsonify({
