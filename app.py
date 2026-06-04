@@ -6,6 +6,7 @@ import sqlite3
 from datetime import datetime, timedelta
 import calendar
 import dateparser
+import os
 
 app = Flask(__name__)
 
@@ -62,8 +63,6 @@ def create_backup():
     )
 
     cleanup_backups()
-
-import os
 
 def cleanup_backups():
 
