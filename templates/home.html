@@ -362,6 +362,11 @@ SARATHI Home
             `${data.storage.free_gb} GB Free`
 
         document.getElementById(
+            'storageSummary'
+        ).innerText =
+            `${data.storage.free_gb} GB Free`
+
+        document.getElementById(
             'backupCount'
         ).innerText =
             `Backups: ${data.backup_count}`
