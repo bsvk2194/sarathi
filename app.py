@@ -130,6 +130,11 @@ def health():
         "network": "connected"
     })
 
+# Storage route
+@app.route('/storage')
+def storage():
+    return render_template('storage.html')
+
 
 @app.route('/dashboard-data')
 def dashboard_data():
