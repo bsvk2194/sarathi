@@ -343,6 +343,20 @@ SARATHI Home
             'latestNote'
         ).innerText =
             data.latest_note
+        document.getElementById(
+            'storageUsed'
+        ).innerText =
+            `${data.storage.used_gb} GB Used`
+
+        document.getElementById(
+            'storageFree'
+        ).innerText =
+            `${data.storage.free_gb} GB Free`
+
+        document.getElementById(
+            'backupCount'
+        ).innerText =
+            `Backups: ${data.backup_count}`
 
         let eventsPreview =
             document.getElementById(
