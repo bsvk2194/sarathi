@@ -175,7 +175,36 @@ def dashboard_data():
 
     latest_note = cursor.fetchone()
 
+    total, used, free = shutil.disk_usage(
+    "/storage/emulated/0"
+    )
+
+    total_gb = round(total / (1024**3), 2)
+    used_gb = round(used / (1024**3), 2)
+    free_gb = round(free / (1024**3), 2)
+
     conn.close()
+
+    backup_folder = "/storage/emulated/0/SARATHI_SYNC"
+
+    backup_count = len([
+        f for f in os.listdir(backup_folder)
+        if f.startswith("backup_")
+        and f.endswith(".db")
+    ])
+
+    backups = [
+    f for f in os.listdir(backup_folder)
+    if f.startswith("backup_")
+    and f.endswith(".db")
+    ]
+
+    latest_backup = (
+        max(backups)
+        if backups
+        else "No backups"
+    )
+
 
     events = []
 
@@ -185,6 +214,7 @@ def dashboard_data():
             "title": event[0],
             "date": event[1]
         })
+
 
     return jsonify({
 
@@ -199,7 +229,22 @@ def dashboard_data():
 
         "latest_note":
             latest_note[0]
-            if latest_note else "No notes yet"
+            if latest_note else "No notes yet",
+
+        "storage": {
+
+            "total_gb": total_gb,
+
+            "used_gb": used_gb,
+
+            "free_gb": free_gb
+
+        },
+
+        "backup_count": backup_count,
+
+        "latest_backup": latest_backup
+
     })
 
 # Get all notes
