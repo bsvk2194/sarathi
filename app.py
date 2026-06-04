@@ -61,6 +61,36 @@ def create_backup():
         backup_name
     )
 
+    cleanup_backups()
+
+import os
+
+def cleanup_backups():
+
+    backup_folder = "/storage/emulated/0/SARATHI_SYNC"
+
+    backups = []
+
+    for file in os.listdir(backup_folder):
+
+        if file.startswith("backup_") and file.endswith(".db"):
+
+            full_path = os.path.join(
+                backup_folder,
+                file
+            )
+
+            backups.append(full_path)
+
+    backups.sort(
+        key=os.path.getmtime,
+        reverse=True
+    )
+
+    for old_backup in backups[50:]:
+
+        os.remove(old_backup)
+
 # Home route
 @app.route('/')
 def home():
