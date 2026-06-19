@@ -135,7 +135,7 @@ def health():
 def storage():
     return render_template('storage.html')
 
-# Backup route
+# Create Backup route
 @app.route('/create-backup', methods=['POST'])
 def create_backup_route():
 
@@ -145,6 +145,31 @@ def create_backup_route():
         "message": "Backup created successfully"
     })
 
+# Backup history route
+@app.route('/backup-history')
+def backup_history():
+
+    backup_folder = (
+        "/storage/emulated/0/SARATHI_SYNC"
+    )
+
+    backups = []
+
+    for file in sorted(
+        os.listdir(backup_folder),
+        reverse=True
+    ):
+
+        if (
+            file.startswith("backup_")
+            and file.endswith(".db")
+        ):
+
+            backups.append({
+                "name": file
+            })
+
+    return jsonify(backups)
 
 @app.route('/dashboard-data')
 def dashboard_data():
