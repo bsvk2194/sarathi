@@ -267,10 +267,48 @@ async function loadStorage(){
     ).innerText =
         data.backup_count
 
+    let backupName =
+    data.latest_backup
+
+    let match =
+        backupName.match(
+            /backup_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})/
+        )
+
+    if(match){
+
+        let months = [
+            "Jan","Feb","Mar","Apr",
+            "May","Jun","Jul","Aug",
+            "Sep","Oct","Nov","Dec"
+        ]
+
+        let day =
+            match[3]
+
+        let month =
+            months[
+                parseInt(match[2]) - 1
+            ]
+
+        let year =
+            match[1]
+
+        let time =
+            `${match[4]}:${match[5]}`
+
+        document.getElementById(
+            'latestBackup'
+        ).innerHTML =
+            `${day} ${month} ${year}<br>${time}`
+    }
+    else{
+
     document.getElementById(
         'latestBackup'
     ).innerText =
-        data.latest_backup
+        backupName
+}
 
     document.getElementById(
         'storageRing'
