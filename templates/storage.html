@@ -154,6 +154,38 @@ Storage Status
     vertical-align:middle;
 }
 
+.backup-button{
+
+    background:#ff7722;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 24px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    margin-top:15px;
+
+    font-weight:bold;
+}
+
+.backup-button:hover{
+
+    box-shadow:
+        0 0 15px rgba(255,119,34,0.5);
+}
+
+#backupMessage{
+
+    margin-top:15px;
+
+    color:#22c55e;
+}
+
 </style>
 
 {% endblock %}
@@ -195,6 +227,15 @@ Storage Status
         M31 ONLINE
 
     </h2>
+
+    <button
+        class="backup-button"
+        onclick="createBackup()"
+    >
+        Create Backup
+    </button>
+
+    <p id="backupMessage"></p>
 
     <div class="stats-grid">
 
@@ -345,6 +386,27 @@ async function loadStorage(){
 }
 
 loadStorage()
+
+async function createBackup(){
+
+    let response =
+        await fetch(
+            '/create-backup',
+            {
+                method:'POST'
+            }
+        )
+
+    let data =
+        await response.json()
+
+    document.getElementById(
+        'backupMessage'
+    ).innerText =
+        data.message
+
+    loadStorage()
+}
 
 </script>
 

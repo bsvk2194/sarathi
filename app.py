@@ -135,6 +135,16 @@ def health():
 def storage():
     return render_template('storage.html')
 
+# Backup route
+@app.route('/create-backup', methods=['POST'])
+def create_backup_route():
+
+    create_backup()
+
+    return jsonify({
+        "message": "Backup created successfully"
+    })
+
 
 @app.route('/dashboard-data')
 def dashboard_data():
