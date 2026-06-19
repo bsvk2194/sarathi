@@ -4,10 +4,270 @@
 Storage Status
 {% endblock %}
 
+{% block extra_css %}
+
+<style>
+
+.storage-header{
+
+    background:rgba(255,255,255,0.05);
+
+    padding:30px;
+
+    border-radius:20px;
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    margin-bottom:30px;
+}
+
+.storage-header h1{
+
+    color:#ff7722;
+
+    margin-bottom:10px;
+}
+
+.storage-header p{
+
+    color:#9ca3af;
+}
+
+.storage-card{
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+}
+
+.storage-ring{
+
+    width:240px;
+
+    height:240px;
+
+    border-radius:50%;
+
+    margin:20px auto;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:
+        conic-gradient(
+            #ff7722 0deg,
+            rgba(255,255,255,0.08) 0deg
+        );
+
+    box-shadow:
+        0 0 25px rgba(255,119,34,0.3);
+}
+
+.storage-inner{
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    background:#08122e;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+}
+
+#storagePercent{
+
+    font-size:42px;
+
+    font-weight:bold;
+
+    color:#ff7722;
+}
+
+.storage-label{
+
+    color:#9ca3af;
+
+    letter-spacing:2px;
+}
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+
+    gap:20px;
+
+    margin-top:30px;
+}
+
+.stat-box{
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:15px;
+
+    padding:20px;
+}
+
+.stat-box h3{
+
+    color:#f4c430;
+
+    margin-bottom:10px;
+}
+
+</style>
+
+{% endblock %}
+
 {% block content %}
 
-<h1>Storage Status</h1>
+<div class="storage-header">
 
-<p>Coming Soon...</p>
+    <h1>Storage Status</h1>
+
+    <p>
+        Monitor SARATHI storage and backup health.
+    </p>
+
+</div>
+
+<div class="storage-card">
+
+    <div class="storage-ring" id="storageRing">
+
+        <div class="storage-inner">
+
+            <div id="storagePercent">
+                0%
+            </div>
+
+            <div class="storage-label">
+                FREE
+            </div>
+
+        </div>
+
+    </div>
+
+    <h2>M31 ONLINE</h2>
+
+    <div class="stats-grid">
+
+        <div class="stat-box">
+
+            <h3>Used</h3>
+
+            <p id="usedSpace">
+                Loading...
+            </p>
+
+        </div>
+
+        <div class="stat-box">
+
+            <h3>Free</h3>
+
+            <p id="freeSpace">
+                Loading...
+            </p>
+
+        </div>
+
+        <div class="stat-box">
+
+            <h3>Backups</h3>
+
+            <p id="backupCount">
+                Loading...
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+async function loadStorage(){
+
+    let response =
+        await fetch('/dashboard-data')
+
+    let data =
+        await response.json()
+
+    let free =
+        data.storage.free_gb
+
+    let total =
+        data.storage.total_gb
+
+    let used =
+        data.storage.used_gb
+
+    let percent =
+        ((free / total) * 100)
+        .toFixed(1)
+
+    let degrees =
+        (percent / 100) * 360
+
+    document.getElementById(
+        'storagePercent'
+    ).innerText =
+        `${percent}%`
+
+    document.getElementById(
+        'usedSpace'
+    ).innerText =
+        `${used} GB`
+
+    document.getElementById(
+        'freeSpace'
+    ).innerText =
+        `${free} GB`
+
+    document.getElementById(
+        'backupCount'
+    ).innerText =
+        data.backup_count
+
+    document.getElementById(
+        'storageRing'
+    ).style.background =
+    `conic-gradient(
+        #ff7722 ${degrees}deg,
+        rgba(255,255,255,0.08) ${degrees}deg
+    )`
+}
+
+loadStorage()
+
+</script>
 
 {% endblock %}
