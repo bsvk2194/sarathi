@@ -186,6 +186,39 @@ Storage Status
     color:#22c55e;
 }
 
+.history-card{
+
+    margin-top:30px;
+
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    border-radius:20px;
+
+    padding:30px;
+}
+
+.history-card h2{
+
+    color:#f4c430;
+
+    margin-bottom:20px;
+}
+
+.backup-item{
+
+    padding:15px;
+
+    margin-bottom:10px;
+
+    border-left:4px solid #ff7722;
+
+    background:rgba(255,255,255,0.03);
+
+    border-radius:10px;
+}
+
 </style>
 
 {% endblock %}
@@ -280,6 +313,13 @@ Storage Status
         </div>
 
     </div>
+
+</div>
+<div class="history-card">
+
+    <h2>Backup History</h2>
+
+    <div id="backupHistory"></div>
 
 </div>
 
@@ -386,7 +426,7 @@ async function loadStorage(){
 }
 
 loadStorage()
-
+loadBackupHistory()
 async function createBackup(){
 
     let response =
@@ -406,6 +446,38 @@ async function createBackup(){
         data.message
 
     loadStorage()
+    loadBackupHistory()
+}
+
+async function loadBackupHistory(){
+
+    let response =
+        await fetch('/backup-history')
+
+    let backups =
+        await response.json()
+
+    let container =
+        document.getElementById(
+            'backupHistory'
+        )
+
+    container.innerHTML = ""
+
+    backups.forEach(backup => {
+
+        let div =
+            document.createElement('div')
+
+        div.className =
+            "backup-item"
+
+        div.innerText =
+            backup.name
+
+        container.appendChild(div)
+
+    })
 }
 
 </script>
