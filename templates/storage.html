@@ -203,6 +203,16 @@ Storage Status
 
         </div>
 
+        <div class="stat-box">
+
+            <h3>Latest Backup</h3>
+
+            <p id="latestBackup">
+                Loading...
+            </p>
+
+        </div>
+
     </div>
 
 </div>
@@ -256,6 +266,11 @@ async function loadStorage(){
         'backupCount'
     ).innerText =
         data.backup_count
+
+    document.getElementById(
+        'latestBackup'
+    ).innerText =
+        data.latest_backup
 
     document.getElementById(
         'storageRing'
