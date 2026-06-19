@@ -135,6 +135,25 @@ Storage Status
     margin-bottom:10px;
 }
 
+.online-dot{
+
+    display:inline-block;
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+    box-shadow:0 0 12px #22c55e;
+
+    margin-right:10px;
+
+    vertical-align:middle;
+}
+
 </style>
 
 {% endblock %}
@@ -162,14 +181,20 @@ Storage Status
             </div>
 
             <div class="storage-label">
-                FREE
+                USED
             </div>
 
         </div>
 
     </div>
 
-    <h2>M31 ONLINE</h2>
+    <h2>
+
+        <span class="online-dot"></span>
+
+        M31 ONLINE
+
+    </h2>
 
     <div class="stats-grid">
 
@@ -241,7 +266,7 @@ async function loadStorage(){
         data.storage.used_gb
 
     let percent =
-        ((free / total) * 100)
+        ((used / total) * 100)
         .toFixed(1)
 
     let degrees =
