@@ -7,12 +7,13 @@ from datetime import datetime, timedelta
 import calendar
 import dateparser
 import os
+import requests
 
 app = Flask(__name__)
 
 DATABASE = "sarathi.db"
 LAST_TASK_RESULTS = []
-
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Initialize database
 def init_db():
@@ -134,6 +135,50 @@ def health():
 @app.route('/storage')
 def storage():
     return render_template('storage.html')
+
+# AI assistant route
+@app.route('/ask-ai', methods=['POST'])
+def ask_ai():
+
+    data = request.get_json()
+
+    user_message = data.get("message", "")
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are SARATHI, Karthik's personal AI operating system. "
+                    "Be concise, practical and helpful."
+                )
+            },
+            {
+                "role": "user",
+                "content": user_message
+            }
+        ]
+    }
+
+    response = requests.post(
+        url,
+        headers=headers,
+        json=payload
+    )
+
+    reply = response.json()["choices"][0]["message"]["content"]
+
+    return jsonify({
+        "reply": reply
+    })
 
 # Create Backup route
 @app.route('/create-backup', methods=['POST'])
