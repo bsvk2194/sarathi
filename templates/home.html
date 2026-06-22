@@ -153,6 +153,44 @@ SARATHI Home
         box-shadow:0 0 15px #f4c430;
     }
 
+    .response-box{
+
+        background:#111827;
+
+        border:1px solid rgba(255,255,255,0.08);
+
+        border-radius:15px;
+
+        padding:20px;
+
+        margin-top:20px;
+
+        min-height:80px;
+
+        color:#d1d5db;
+
+        font-size:18px;
+
+        line-height:1.6;
+
+        box-shadow:inset 0 0 15px rgba(244,196,48,0.05);
+
+        animation:fadeIn 0.4s ease;
+    }
+
+    .response-label{
+
+        color:#f4c430;
+
+        font-size:14px;
+
+        letter-spacing:2px;
+
+        margin-bottom:10px;
+
+        text-transform:uppercase;
+    }
+
 </style>
 
 {% endblock %}
@@ -257,10 +295,19 @@ SARATHI Home
 
     </div>
 
-    <p id="assistantResponse">
-        Hello Karthik! How can I assist you today?
-    </p>
+    <div class="response-box">
 
+        <div class="response-label">
+            SARATHI
+        </div>
+
+        <div id="assistantResponse">
+
+            Hello Karthik. How can I help today?
+
+        </div>
+
+    </div>
 </div>
 
 {% endblock %}
