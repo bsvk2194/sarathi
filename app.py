@@ -174,10 +174,10 @@ def ask_ai():
         json=payload
     )
 
-    reply = response.json()["choices"][0]["message"]["content"]
+    print(response.json())
 
     return jsonify({
-        "reply": reply
+        "reply": "debug"
     })
 
 # Create Backup route
