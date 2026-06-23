@@ -440,17 +440,22 @@ SARATHI Home
 
     async function runCommand(){
 
-        let command =
+        let message =
             document.getElementById(
                 'assistantCommand'
             ).value
 
-        if (!command){
+        if (!message){
             return;
         }
 
+        document.getElementById(
+            'assistantResponse'
+        ).innerText =
+            "Thinking..."
+
         let response =
-            await fetch('/assistant-command', {
+            await fetch('/ask-ai', {
 
                 method:'POST',
 
@@ -459,7 +464,7 @@ SARATHI Home
                 },
 
                 body:JSON.stringify({
-                    command:command
+                    message:message
                 })
             })
 
@@ -468,8 +473,23 @@ SARATHI Home
         document.getElementById(
             'assistantResponse'
         ).innerText =
-            data.response
+            data.reply
+
+        document.getElementById(
+            'assistantCommand'
+        ).value = ""
+
     }
+
+    document.getElementById(
+        'assistantCommand'
+    ).addEventListener('keypress', function(e){
+
+        if(e.key === 'Enter'){
+            runCommand()
+        }
+
+    })
 
     updateGreeting()
 
