@@ -206,6 +206,35 @@ def ask_ai():
             "reply":
             f"You currently have {count} pending tasks."
         })
+    
+    elif ("latest" in message_lower and "note" in message_lower):
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT content
+            FROM notes
+            ORDER BY created_at DESC
+            LIMIT 1
+            """
+        )
+
+        note = cursor.fetchone()
+
+        conn.close()
+
+        if not note:
+
+            return jsonify({
+                "reply": "You do not have any notes yet."
+            })
+
+        return jsonify({
+            "reply":
+            f"Latest Note:\n\n{note[0]}"
+        })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
