@@ -207,7 +207,7 @@ def ask_ai():
             f"You currently have {count} pending tasks."
         })
     
-    elif ("latest" in message_lower and "note" in message_lower):
+    elif ("latest" in message_lower and "note" in message_lower) or ("recent" in message_lower and "note" in message_lower):
 
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
