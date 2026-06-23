@@ -148,28 +148,6 @@ def ask_ai():
     user_message = data.get("message", "")
 
     message_lower = user_message.lower()
-
-    if ("pending" in message_lower and "task" in message_lower):
-
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
-
-        cursor.execute(
-            """
-            SELECT COUNT(*)
-            FROM tasks
-            WHERE completed = 0
-            """
-        )
-
-        count = cursor.fetchone()[0]
-
-        conn.close()
-
-        return jsonify({
-            "reply":
-            f"You currently have {count} pending tasks."
-        })
     
     if ("show" in message_lower and "pending" in message_lower and "task" in message_lower):
 
@@ -205,6 +183,28 @@ def ask_ai():
         return jsonify({
             "reply":
             f"Pending Tasks:\n\n{task_list}"
+        })
+    
+    elif ("pending" in message_lower and "task" in message_lower):
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT COUNT(*)
+            FROM tasks
+            WHERE completed = 0
+            """
+        )
+
+        count = cursor.fetchone()[0]
+
+        conn.close()
+
+        return jsonify({
+            "reply":
+            f"You currently have {count} pending tasks."
         })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
