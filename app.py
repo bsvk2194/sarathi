@@ -170,6 +170,42 @@ def ask_ai():
             "reply":
             f"You currently have {count} pending tasks."
         })
+    
+    if ("show" in message_lower and "pending" in message_lower and "task" in message_lower):
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT task
+            FROM tasks
+            WHERE completed = 0
+            """
+        )
+
+        tasks = cursor.fetchall()
+
+        conn.close()
+
+        if not tasks:
+
+            return jsonify({
+                "reply": "You have no pending tasks."
+            })
+
+        task_list = ""
+
+        for i, task in enumerate(tasks, start=1):
+
+            task_list += (
+                f"{i}. {task[0]}\n"
+            )
+
+        return jsonify({
+            "reply":
+            f"Pending Tasks:\n\n{task_list}"
+        })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
