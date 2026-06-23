@@ -149,7 +149,7 @@ def ask_ai():
 
     message_lower = user_message.lower()
 
-    if "pending task" in message_lower:
+    if ("pending" in message_lower and "task" in message_lower):
 
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
