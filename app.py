@@ -235,6 +235,86 @@ def ask_ai():
             "reply":
             f"Latest Note:\n\n{note[0]}"
         })
+    
+    elif ("event" in message_lower and ("upcoming" in message_lower or "coming up" in message_lower)):
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT title, event_date
+            FROM events
+            ORDER BY event_date ASC
+            LIMIT 5
+            """
+        )
+
+        events = cursor.fetchall()
+
+        conn.close()
+
+        if not events:
+
+            return jsonify({
+                "reply": "No upcoming events found."
+            })
+
+        event_list = ""
+
+        for i, event in enumerate(events, start=1):
+
+            event_list += (
+                f"{i}. {event[0]} ({event[1]})\n"
+            )
+
+        return jsonify({
+            "reply":
+            f"Upcoming Events:\n\n{event_list}"
+        })
+    
+    elif ("storage" in message_lower or "space" in message_lower):
+
+        total, used, free = shutil.disk_usage(
+            "/storage/emulated/0"
+        )
+
+        used_gb = round(
+            used / (1024**3), 2
+        )
+
+        free_gb = round(
+            free / (1024**3), 2
+        )
+
+        return jsonify({
+            "reply":
+            f"""
+            Storage Status
+
+            Used: {used_gb} GB
+            Free: {free_gb} GB
+            """
+        })
+    
+    elif ("backup" in message_lower and ("count" in message_lower or "many" in message_lower or "how" in message_lower)):
+
+        backup_folder = (
+            "/storage/emulated/0/SARATHI_SYNC"
+        )
+
+        backup_count = len([
+            f for f in os.listdir(
+                backup_folder
+            )
+            if f.startswith("backup_")
+            and f.endswith(".db")
+        ])
+
+        return jsonify({
+            "reply":
+            f"You currently have {backup_count} backups."
+        })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
