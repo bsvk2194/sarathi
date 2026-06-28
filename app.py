@@ -185,7 +185,7 @@ def ask_ai():
             f"Pending Tasks:\n\n{task_list}"
         })
     
-    elif ("pending" in message_lower and "task" in message_lower):
+    elif ("pending" in message_lower and "task" in message_lower) or ("how many" in message_lower and "task" in message_lower):
 
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
