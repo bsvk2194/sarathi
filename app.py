@@ -148,6 +148,8 @@ def ask_ai():
     user_message = data.get("message", "")
 
     message_lower = user_message.lower()
+
+    global LAST_TASK_RESULTS
     
     if ("show" in message_lower and "pending" in message_lower and "task" in message_lower):
 
@@ -156,7 +158,7 @@ def ask_ai():
 
         cursor.execute(
             """
-            SELECT task
+            SELECT id, task
             FROM tasks
             WHERE completed = 0
             """
@@ -179,7 +181,7 @@ def ask_ai():
         for i, task in enumerate(tasks, start=1):
 
             task_list += (
-                f"{i}. {task[0]}\n"
+                f"{i}. {task[1]}\n"
             )
 
         return jsonify({
