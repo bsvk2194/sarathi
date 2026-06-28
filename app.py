@@ -387,9 +387,17 @@ def ask_ai():
 
             note_text = user_message[len("add note"):].strip()
 
-        else:
+        elif "add a note" in message_lower:
+
+            note_text = user_message[len("add a note"):].strip()
+
+        elif "create note" in message_lower:
 
             note_text = user_message[len("create note"):].strip()
+
+        else:
+
+            note_text = user_message[len("create a note"):].strip()
 
         if note_text == "":
 
