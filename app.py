@@ -535,6 +535,88 @@ def ask_ai():
             "reply":
             f"Completed task: {task[1]}"
         })
+    
+    elif ("add event" in message_lower or "create event" in message_lower 
+          or "add an event" in message_lower or "create an event" in message_lower):
+
+        if "add event" in message_lower:
+
+            event_text = user_message[len("add event"):].strip()
+
+        elif "create event" in message_lower:
+
+            event_text = user_message[len("create event"):].strip()
+
+        elif "add an event" in message_lower:
+
+            event_text = user_message[len("add an event"):].strip()
+
+        elif "create an event" in message_lower:
+
+            event_text = user_message[len("create an event"):].strip()
+
+
+        parts = event_text.rsplit(" ", 1)
+
+        if len(parts) < 2:
+
+            return jsonify({
+                "reply":
+                "Use the format:\n\nAdd event <title> <date>"
+            })
+
+        title = parts[0]
+
+        event_date = parts[1]
+
+        parsed_date = dateparser.parse(
+            event_date,
+            settings={
+                "PREFER_DATES_FROM": "future"
+            }
+        )
+
+        if not parsed_date:
+
+            return jsonify({
+                "reply":
+                "I couldn't understand the date."
+            })
+
+        event_date = parsed_date.strftime("%Y-%m-%d")
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO events
+            (title, event_date)
+            VALUES (?, ?)
+            """,
+            (
+                title,
+                event_date
+            )
+        )
+
+        conn.commit()
+
+        create_backup()
+
+        conn.close()
+
+        return jsonify({
+            "reply":
+            f"""Event added successfully.
+
+    Title:
+    {title}
+
+    Date:
+    {event_date}
+    """
+        })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
