@@ -326,10 +326,26 @@ def ask_ai():
                 1
             ).strip()
 
-        else:
+        elif "add a task" in message_lower:
+
+            task_text = user_message.lower().replace(
+                "add a task",
+                "",
+                1
+            ).strip()
+
+        elif "create task" in message_lower:
 
             task_text = user_message.lower().replace(
                 "create task",
+                "",
+                1
+            ).strip()
+
+        else:
+
+            task_text = user_message.lower().replace(
+                "create a task",
                 "",
                 1
             ).strip()
@@ -442,27 +458,33 @@ def ask_ai():
     """
         })
     
-    elif ("complete task" in message_lower or "finish task" in message_lower or "mark task" in message_lower or "complete the task" in message_lower or "mark the task" in message_lower):
+    elif ("complete task" in message_lower or "finish task" in message_lower or "mark task" in message_lower 
+          or "complete the task" in message_lower or "mark the task" in message_lower or "finish the task" in message_lower):
 
         if "complete task" in message_lower:
 
             task_name = user_message[len("complete task"):].strip()
 
+        elif "mark task" in message_lower:
+
+            task_name = user_message[len("mark task"):].strip()
+
         elif "finish task" in message_lower:
 
             task_name = user_message[len("finish task"):].strip()
 
-        else:
+        elif "complete the task" in message_lower:
 
-            task_name = user_message.replace(
-                "mark task",
-                "",
-                1
-            ).replace(
-                "complete",
-                "",
-                1
-            ).strip()
+            task_name = user_message[len("complete the task"):].strip()
+
+        elif "mark the task" in message_lower:
+
+            task_name = user_message[len("mark the task"):].strip()
+
+        elif "finish the task" in message_lower:
+
+            task_name = user_message[len("finish the task"):].strip()
+
 
         if task_name == "":
 
