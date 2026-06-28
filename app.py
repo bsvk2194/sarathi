@@ -316,7 +316,7 @@ def ask_ai():
             f"You currently have {backup_count} backups."
         })
 
-    elif ("add task" in message_lower or "create task" in message_lower):
+    elif ("add task" in message_lower or "add a task" in message_lower or "create task" in message_lower or "create a task" in message_lower):
 
         if "add task" in message_lower:
 
@@ -381,7 +381,7 @@ def ask_ai():
     """
         })
     
-    elif ("add note" in message_lower or "create note" in message_lower):
+    elif ("add note" in message_lower or "add a note" in message_lower or "create note" in message_lower or "create a note" in message_lower):
 
         if "add note" in message_lower:
 
