@@ -380,6 +380,59 @@ def ask_ai():
     Pending tasks: {pending_tasks}
     """
         })
+    
+    elif ("add note" in message_lower or "create note" in message_lower):
+
+        if "add note" in message_lower:
+
+            note_text = user_message[len("add note"):].strip()
+
+        else:
+
+            note_text = user_message[len("create note"):].strip()
+
+        if note_text == "":
+
+            return jsonify({
+                "reply": "Please provide a note."
+            })
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO notes (content)
+            VALUES (?)
+            """,
+            (note_text,)
+        )
+
+        conn.commit()
+
+        create_backup()
+
+        cursor.execute(
+            """
+            SELECT COUNT(*)
+            FROM notes
+            """
+        )
+
+        total_notes = cursor.fetchone()[0]
+
+        conn.close()
+
+        return jsonify({
+            "reply":
+            f"""Note saved successfully.
+
+    Note:
+    {note_text}
+
+    Total notes: {total_notes}
+    """
+        })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
