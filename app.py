@@ -316,6 +316,71 @@ def ask_ai():
             f"You currently have {backup_count} backups."
         })
 
+    elif ("add task" in message_lower or "create task" in message_lower):
+
+        if "add task" in message_lower:
+
+            task_text = user_message.lower().replace(
+                "add task",
+                "",
+                1
+            ).strip()
+
+        else:
+
+            task_text = user_message.lower().replace(
+                "create task",
+                "",
+                1
+            ).strip()
+
+        if task_text == "":
+
+            return jsonify({
+                "reply": "Please provide a task."
+            })
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO tasks (task, completed)
+            VALUES (?, ?)
+            """,
+            (
+                task_text,
+                0
+            )
+        )
+
+        conn.commit()
+
+        create_backup()
+
+        cursor.execute(
+            """
+            SELECT COUNT(*)
+            FROM tasks
+            WHERE completed = 0
+            """
+        )
+
+        pending_tasks = cursor.fetchone()[0]
+
+        conn.close()
+
+        return jsonify({
+            "reply":
+            f"""Task added successfully.
+
+    Task:
+    {task_text}
+
+    Pending tasks: {pending_tasks}
+    """
+        })
+
     url = "https://api.groq.com/openai/v1/chat/completions"
 
     headers = {
