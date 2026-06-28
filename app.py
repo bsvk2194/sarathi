@@ -433,6 +433,78 @@ def ask_ai():
     Total notes: {total_notes}
     """
         })
+    
+    elif ("complete task" in message_lower or "finish task" in message_lower or "mark task" in message_lower or "complete the task" in message_lower or "mark the task" in message_lower):
+
+        if "complete task" in message_lower:
+
+            task_name = user_message[len("complete task"):].strip()
+
+        elif "finish task" in message_lower:
+
+            task_name = user_message[len("finish task"):].strip()
+
+        else:
+
+            task_name = user_message.replace(
+                "mark task",
+                "",
+                1
+            ).replace(
+                "complete",
+                "",
+                1
+            ).strip()
+
+        if task_name == "":
+
+            return jsonify({
+                "reply": "Please specify which task to complete."
+            })
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT id, task
+            FROM tasks
+            WHERE LOWER(task) LIKE ?
+            AND completed = 0
+            LIMIT 1
+            """,
+            (f"%{task_name.lower()}%",)
+        )
+
+        task = cursor.fetchone()
+
+        if not task:
+
+            conn.close()
+
+            return jsonify({
+                "reply": "I couldn't find a matching pending task."
+            })
+
+        cursor.execute(
+            """
+            UPDATE tasks
+            SET completed = 1
+            WHERE id = ?
+            """,
+            (task[0],)
+        )
+
+        conn.commit()
+
+        create_backup()
+
+        conn.close()
+
+        return jsonify({
+            "reply":
+            f"Completed task: {task[1]}"
+        })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
