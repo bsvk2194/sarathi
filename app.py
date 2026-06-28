@@ -617,6 +617,75 @@ def ask_ai():
     {event_date}
     """
         })
+    
+    elif ("complete the" in message_lower):
+
+        if not LAST_TASK_RESULTS:
+
+            return jsonify({
+                "reply":
+                "No recent task list found."
+            })
+
+        words = message_lower.split()
+
+        if len(words) < 4:
+
+            return jsonify({
+                "reply":
+                "Specify which task."
+            })
+
+        position_word = words[-1]
+
+        mapping = {
+            "first":0,
+            "second":1,
+            "third":2,
+            "fourth":3,
+            "fifth":4
+        }
+
+        if position_word not in mapping:
+
+            return jsonify({
+                "reply":
+                "Unknown task position."
+            })
+
+        index = mapping[position_word]
+
+        if index >= len(LAST_TASK_RESULTS):
+
+            return jsonify({
+                "reply":
+                "Task number out of range."
+            })
+
+        task_id =LAST_TASK_RESULTS[index][0]
+
+        task_name =LAST_TASK_RESULTS[index][1]
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE tasks
+            SET completed=1
+            WHERE id=?
+            """,
+            (task_id,)
+        )
+
+        conn.commit()
+        create_backup()
+        conn.close()
+
+        return jsonify({
+            "reply":
+            f"Completed task: {task_name}"
+        })
 
     url = "https://api.groq.com/openai/v1/chat/completions"
 
