@@ -179,7 +179,7 @@ def ask_ai():
         for i, task in enumerate(tasks, start=1):
 
             task_list += (
-                f"{i}. {task[1]}\n"
+                f"{i}. {task[0]}\n"
             )
 
         return jsonify({
