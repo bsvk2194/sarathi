@@ -240,6 +240,83 @@ def ask_ai():
             f"Latest Note:\n\n{note[0]}"
         })
     
+    elif (
+    "note" in message_lower
+    and (
+        "about" in message_lower
+        or "containing" in message_lower
+        or "for" in message_lower
+    )
+):
+
+        if "about" in message_lower:
+
+            keyword = message_lower.split(
+                "about",
+                1
+            )[1].strip()
+
+        elif "containing" in message_lower:
+
+            keyword = message_lower.split(
+                "containing",
+                1
+            )[1].strip()
+
+        else:
+
+            keyword = message_lower.split(
+                "for",
+                1
+            )[1].strip()
+
+        if keyword == "":
+
+            return jsonify({
+                "reply":
+                "Please tell me what to search for."
+            })
+
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT content
+            FROM notes
+            WHERE LOWER(content) LIKE ?
+            ORDER BY created_at DESC
+            """,
+            (f"%{keyword.lower()}%",)
+        )
+
+        notes = cursor.fetchall()
+
+        conn.close()
+
+        if not notes:
+
+            return jsonify({
+                "reply":
+                f"No notes found containing '{keyword}'."
+            })
+
+        notes_list = ""
+
+        for i, note in enumerate(notes, start=1):
+
+            notes_list += (
+                f"{i}. {note[0]}\n\n"
+            )
+
+        return jsonify({
+            "reply":
+            f"""Found {len(notes)} matching note(s).
+
+    {notes_list}
+    """
+        })
+    
     elif ("event" in message_lower and ("upcoming" in message_lower or "coming up" in message_lower)):
 
         conn = sqlite3.connect(DATABASE)
