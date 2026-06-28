@@ -164,6 +164,8 @@ def ask_ai():
 
         tasks = cursor.fetchall()
 
+        LAST_TASK_RESULTS = tasks
+
         conn.close()
 
         if not tasks:
@@ -177,7 +179,7 @@ def ask_ai():
         for i, task in enumerate(tasks, start=1):
 
             task_list += (
-                f"{i}. {task[0]}\n"
+                f"{i}. {task[1]}\n"
             )
 
         return jsonify({
@@ -636,7 +638,7 @@ def ask_ai():
                 "Specify which task."
             })
 
-        position_word = words[-1]
+        position_word = words[2]
 
         mapping = {
             "first":0,
