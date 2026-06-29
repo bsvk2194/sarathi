@@ -481,7 +481,7 @@ def ask_ai():
 
             return jsonify({
                 "reply":
-                f"You currently have {count} pending tasks."
+                f"You currently have {count} pending tasks. Would you like to see the list of pending tasks?"
             })
         
         else:
