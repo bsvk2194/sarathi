@@ -267,6 +267,13 @@ Return:
 
 4. latest_note
 
+Examples:
+
+- What is my latest note?
+- Show my most recent note.
+- Show my newest note.
+- What was the last note I saved?
+
 Return:
 
 {
