@@ -361,19 +361,21 @@ Return:
     "parameters":{}
 }
 
-User:
-{user_message}
 """
 
     payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [
-            {
-                "role": "system",
-                "content": prompt
-            }
-        ]
-    }
+    "model": "llama-3.3-70b-versatile",
+    "messages": [
+        {
+            "role": "system",
+            "content": prompt
+        },
+        {
+            "role": "user",
+            "content": user_message
+        }
+    ]
+}
 
     response = requests.post(
         url,
