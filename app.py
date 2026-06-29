@@ -491,39 +491,9 @@ def ask_ai():
             f"You currently have {backup_count} backups."
         })
 
-    elif ("add task" in message_lower or "add a task" in message_lower or "create task" in message_lower or "create a task" in message_lower):
+    elif intent == "add_task":
 
-        if "add task" in message_lower:
-
-            task_text = user_message.lower().replace(
-                "add task",
-                "",
-                1
-            ).strip()
-
-        elif "add a task" in message_lower:
-
-            task_text = user_message.lower().replace(
-                "add a task",
-                "",
-                1
-            ).strip()
-
-        elif "create task" in message_lower:
-
-            task_text = user_message.lower().replace(
-                "create task",
-                "",
-                1
-            ).strip()
-
-        else:
-
-            task_text = user_message.lower().replace(
-                "create a task",
-                "",
-                1
-            ).strip()
+        task_text = parameters.get("task", "").strip()
 
         if task_text == "":
 
