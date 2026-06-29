@@ -751,23 +751,9 @@ def ask_ai():
     """
         })
     
-    elif ("add note" in message_lower or "add a note" in message_lower or "create note" in message_lower or "create a note" in message_lower):
+    elif intent == "add_note":
 
-        if "add note" in message_lower:
-
-            note_text = user_message[len("add note"):].strip()
-
-        elif "add a note" in message_lower:
-
-            note_text = user_message[len("add a note"):].strip()
-
-        elif "create note" in message_lower:
-
-            note_text = user_message[len("create note"):].strip()
-
-        else:
-
-            note_text = user_message[len("create a note"):].strip()
+        note_text = parameters.get("note", "").strip()
 
         if note_text == "":
 
