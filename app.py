@@ -57,8 +57,15 @@ def init_db():
 
 def create_backup():
 
-    backup_name = (
-        "/storage/emulated/0/SARATHI_SYNC/"
+    if os.name == "nt":
+        backup_folder = os.path.join(os.getcwd(), "backups")
+    else:
+        backup_folder = "/storage/emulated/0/SARATHI_SYNC"
+
+    os.makedirs(backup_folder, exist_ok=True)
+
+    backup_name = os.path.join(
+        backup_folder,
         f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
     )
 
@@ -1029,11 +1036,15 @@ def create_backup_route():
 @app.route('/backup-history')
 def backup_history():
 
-    backup_folder = (
-        "/storage/emulated/0/SARATHI_SYNC"
-    )
+    if os.name == "nt":
+        backup_folder = os.path.join(os.getcwd(), "backups")
+    else:
+        backup_folder = "/storage/emulated/0/SARATHI_SYNC"
 
     backups = []
+
+    if not os.path.exists(backup_folder):
+        return jsonify([])
 
     for file in sorted(
         os.listdir(backup_folder),
@@ -1103,19 +1114,24 @@ def dashboard_data():
 
     conn.close()
 
-    backup_folder = "/storage/emulated/0/SARATHI_SYNC"
+    if os.name == "nt":
+        backup_folder = os.path.join(os.getcwd(), "backups")
+    else:
+        backup_folder = "/storage/emulated/0/SARATHI_SYNC"
 
-    backup_count = len([
-        f for f in os.listdir(backup_folder)
-        if f.startswith("backup_")
-        and f.endswith(".db")
-    ])
+    if os.path.exists(backup_folder):
 
-    backups = [
-    f for f in os.listdir(backup_folder)
-    if f.startswith("backup_")
-    and f.endswith(".db")
-    ]
+        backups = [
+            f for f in os.listdir(backup_folder)
+            if f.startswith("backup_")
+            and f.endswith(".db")
+        ]
+
+    else:
+
+        backups = []
+
+    backup_count = len(backups)
 
     latest_backup = (
         max(backups)
