@@ -576,7 +576,7 @@ def ask_ai():
     """
         })
     
-    elif ("event" in message_lower and ("upcoming" in message_lower or "coming up" in message_lower)):
+    elif intent == "upcoming_events":
 
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
