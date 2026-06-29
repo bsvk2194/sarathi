@@ -164,7 +164,7 @@ def classify_intent(user_message):
         "Content-Type": "application/json"
     }
 
-    prompt = f"""
+    prompt = """
 You are the intent classifier for SARATHI.
 
 Your ONLY job is to determine the user's intent.
