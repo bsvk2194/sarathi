@@ -334,35 +334,9 @@ def ask_ai():
             f"Latest Note:\n\n{note[0]}"
         })
     
-    elif (
-    "note" in message_lower
-    and (
-        "about" in message_lower
-        or "containing" in message_lower
-        or "for" in message_lower
-    )
-):
+    elif intent == "search_notes":
 
-        if "about" in message_lower:
-
-            keyword = message_lower.split(
-                "about",
-                1
-            )[1].strip()
-
-        elif "containing" in message_lower:
-
-            keyword = message_lower.split(
-                "containing",
-                1
-            )[1].strip()
-
-        else:
-
-            keyword = message_lower.split(
-                "for",
-                1
-            )[1].strip()
+        keyword = parameters.get("keyword", "").strip()
 
         if keyword == "":
 
