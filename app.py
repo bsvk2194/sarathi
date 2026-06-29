@@ -139,6 +139,75 @@ def health():
 def storage():
     return render_template('storage.html')
 
+# Test intent route
+@app.route("/test-intent", methods=["POST"])
+def test_intent():
+
+    data = request.get_json()
+
+    message = data["message"]
+
+    result = classify_intent(message)
+
+    return jsonify({
+        "result": result
+    })
+
+# Intent classification function
+def classify_intent(user_message):
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    prompt = f"""
+You are an intent classifier for SARATHI.
+
+Your job is NOT to answer the user.
+
+Return ONLY valid JSON.
+
+Possible intents:
+
+- add_task
+- add_note
+- complete_task
+- search_notes
+- search_tasks
+- latest_note
+- pending_tasks
+- upcoming_events
+- storage_status
+- backup_count
+- general_chat
+
+If needed, extract useful parameters.
+
+User:
+{user_message}
+"""
+
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {
+                "role": "system",
+                "content": prompt
+            }
+        ]
+    }
+
+    response = requests.post(
+        url,
+        headers=headers,
+        json=payload
+    )
+
+    return response.json()["choices"][0]["message"]["content"]
+
 # AI assistant route
 @app.route('/ask-ai', methods=['POST'])
 def ask_ai():
