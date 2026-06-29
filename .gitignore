@@ -1,0 +1,18 @@
+# Database
+sarathi.db
+*.db
+
+# Environment
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Backup files
+backups/
+
+# Test files (optional)
+test_gemini.py
+test_groq.py
+test_route.py
