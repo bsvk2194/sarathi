@@ -489,7 +489,7 @@ def ask_ai():
                 "reply": "I couldn't determine whether you wanted the task list or the task count."
             })
     
-    elif ("latest" in message_lower and "note" in message_lower) or ("recent" in message_lower and "note" in message_lower):
+    elif intent == "latest_note":
 
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
