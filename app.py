@@ -614,7 +614,7 @@ def ask_ai():
         })
     
     elif intent == "storage_status":
-        
+
         total, used, free = shutil.disk_usage(
             "/storage/emulated/0"
         )
@@ -637,7 +637,7 @@ def ask_ai():
             """
         })
     
-    elif ("backup" in message_lower and ("count" in message_lower or "many" in message_lower or "how" in message_lower)):
+    elif intent == "backup_count":
 
         backup_folder = (
             "/storage/emulated/0/SARATHI_SYNC"
