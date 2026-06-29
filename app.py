@@ -380,7 +380,28 @@ Return:
 
 --------------------------------------------------
 
-10. general_chat
+10. Intent: add_note
+
+Use when the user wants to save information as a note.
+
+Examples:
+
+- Add note buy Raspberry Pi.
+- Save a note about Flask.
+- Create a note saying Jai Shree Ram.
+
+Return:
+
+{
+    "intent":"add_note",
+    "parameters":{
+        "note":"..."
+    }
+}
+
+--------------------------------------------------
+
+11. general_chat
 
 Use this only if none of the above intents apply.
 
