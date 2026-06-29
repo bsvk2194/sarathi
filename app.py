@@ -175,6 +175,29 @@ DO NOT explain anything.
 
 Return ONLY valid JSON.
 
+STRICT RULES
+
+1. Return ONLY valid JSON.
+
+2. Never include markdown.
+
+3. Never include ```json or ```.
+
+4. Never explain your answer.
+
+5. Always return exactly two top-level keys:
+
+{
+    "intent": "...",
+    "parameters": {}
+}
+
+6. Never omit the parameters object.
+
+7. Never invent parameter names.
+
+Use ONLY the parameter names defined below.
+
 Always use this format:
 
 {
