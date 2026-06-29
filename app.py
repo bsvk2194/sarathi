@@ -216,7 +216,16 @@ User:
         .strip()
     )
 
-    return json.loads(content)
+    try:
+
+        return json.loads(content)
+
+    except json.JSONDecodeError:
+
+        return {
+            "intent": "general_chat",
+            "parameters": {}
+        }
 
 # AI assistant route
 @app.route('/ask-ai', methods=['POST'])
@@ -225,6 +234,12 @@ def ask_ai():
     data = request.get_json()
 
     user_message = data.get("message", "")
+
+    intent_data = classify_intent(user_message)
+
+    intent = intent_data["intent"]
+
+    parameters = intent_data["parameters"]
 
     message_lower = user_message.lower()
 
