@@ -1006,6 +1006,9 @@ def ask_ai():
         json=payload
     )
 
+    print(response.status_code)
+    print(response.text)
+
     reply = response.json()["choices"][0]["message"]["content"]
 
     return jsonify({
@@ -1092,9 +1095,7 @@ def dashboard_data():
 
     latest_note = cursor.fetchone()
 
-    total, used, free = shutil.disk_usage(
-    "/storage/emulated/0"
-    )
+    total, used, free = shutil.disk_usage(os.getcwd())
 
     total_gb = round(total / (1024**3), 2)
     used_gb = round(used / (1024**3), 2)
