@@ -336,7 +336,7 @@ def ask_ai():
     
     elif intent == "search_notes":
 
-        keyword = parameters.get("keyword", "").strip()
+        keyword = parameters.get("query", "").strip()
 
         if keyword == "":
 
