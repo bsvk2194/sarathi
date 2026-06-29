@@ -165,27 +165,201 @@ def classify_intent(user_message):
     }
 
     prompt = f"""
-You are an intent classifier for SARATHI.
+You are the intent classifier for SARATHI.
 
-Your job is NOT to answer the user.
+Your ONLY job is to determine the user's intent.
+
+DO NOT answer the user.
+
+DO NOT explain anything.
 
 Return ONLY valid JSON.
 
-Possible intents:
+Always use this format:
 
-- add_task
-- add_note
-- complete_task
-- search_notes
-- search_tasks
-- latest_note
-- pending_tasks
-- upcoming_events
-- storage_status
-- backup_count
-- general_chat
+{
+    "intent": "...",
+    "parameters": { ... }
+}
 
-If needed, extract useful parameters.
+Available intents:
+
+--------------------------------------------------
+
+1. add_task
+
+When the user wants to remember or complete something.
+
+Examples:
+
+- I need to buy milk.
+- Remind me to study.
+- Add task finish project.
+
+Return:
+
+{
+    "intent":"add_task",
+    "parameters":{
+        "task":"..."
+    }
+}
+
+--------------------------------------------------
+
+2. search_notes
+
+When the user wants to search notes.
+
+Examples:
+
+- Show notes about Flask.
+- Find my notes on Python.
+- Search notes for SQL.
+
+Return:
+
+{
+    "intent":"search_notes",
+    "parameters":{
+        "query":"..."
+    }
+}
+
+--------------------------------------------------
+
+3. pending_tasks
+
+If the user asks for the NUMBER of pending tasks:
+
+Examples:
+
+- How many pending tasks?
+- Pending task count.
+
+Return:
+
+{
+    "intent":"pending_tasks",
+    "parameters":{
+        "mode":"count"
+    }
+}
+
+If the user wants to SEE the pending tasks:
+
+Examples:
+
+- Show pending tasks.
+- List my pending tasks.
+- What tasks are left?
+
+Return:
+
+{
+    "intent":"pending_tasks",
+    "parameters":{
+        "mode":"list"
+    }
+}
+
+--------------------------------------------------
+
+4. latest_note
+
+Return:
+
+{
+    "intent":"latest_note",
+    "parameters":{}
+}
+
+--------------------------------------------------
+
+5. upcoming_events
+
+Return:
+
+{
+    "intent":"upcoming_events",
+    "parameters":{}
+}
+
+--------------------------------------------------
+
+6. storage_status
+
+Return:
+
+{
+    "intent":"storage_status",
+    "parameters":{}
+}
+
+--------------------------------------------------
+
+7. backup_count
+
+Return:
+
+{
+    "intent":"backup_count",
+    "parameters":{}
+}
+
+--------------------------------------------------
+
+8. complete_task
+
+When completing an existing task.
+
+Examples:
+
+- Complete task buy milk.
+- Mark buy milk as done.
+- Finish task buy milk.
+
+Return:
+
+{
+    "intent":"complete_task",
+    "parameters":{
+        "task":"..."
+    }
+}
+
+--------------------------------------------------
+
+9. add_event
+
+Examples:
+
+- Add meeting tomorrow.
+- Schedule dentist appointment.
+- Create event birthday party.
+
+Return:
+
+{
+    "intent":"add_event",
+    "parameters":{
+        "title":"...",
+        "date":"..."
+    }
+}
+
+--------------------------------------------------
+
+10. general_chat
+
+Use this only if none of the above intents apply.
+
+Return:
+
+{
+    "intent":"general_chat",
+    "parameters":{}
+}
 
 User:
 {user_message}
