@@ -9,6 +9,7 @@ import dateparser
 import os
 import requests
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -206,7 +207,16 @@ User:
         json=payload
     )
 
-    return response.json()["choices"][0]["message"]["content"]
+    content = response.json()["choices"][0]["message"]["content"]
+
+    content = (
+        content
+        .replace("```json", "")
+        .replace("```", "")
+        .strip()
+    )
+
+    return json.loads(content)
 
 # AI assistant route
 @app.route('/ask-ai', methods=['POST'])
