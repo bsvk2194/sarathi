@@ -421,65 +421,73 @@ def ask_ai():
 
     global LAST_TASK_RESULTS
     
-    if ("show" in message_lower and "pending" in message_lower and "task" in message_lower):
+    if intent == "pending_tasks":
 
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
+        mode = parameters.get("mode","")
 
-        cursor.execute(
-            """
-            SELECT id, task
-            FROM tasks
-            WHERE completed = 0
-            """
-        )
+        if mode == "list":
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
 
-        tasks = cursor.fetchall()
-
-        LAST_TASK_RESULTS = tasks
-
-        conn.close()
-
-        if not tasks:
-
-            return jsonify({
-                "reply": "You have no pending tasks."
-            })
-
-        task_list = ""
-
-        for i, task in enumerate(tasks, start=1):
-
-            task_list += (
-                f"{i}. {task[1]}\n"
+            cursor.execute(
+                """
+                SELECT id, task
+                FROM tasks
+                WHERE completed = 0
+                """
             )
 
-        return jsonify({
-            "reply":
-            f"Pending Tasks:\n\n{task_list}"
-        })
+            tasks = cursor.fetchall()
+
+            LAST_TASK_RESULTS = tasks
+
+            conn.close()
+
+            if not tasks:
+
+                return jsonify({
+                    "reply": "You have no pending tasks."
+                })
+
+            task_list = ""
+
+            for i, task in enumerate(tasks, start=1):
+
+                task_list += (
+                    f"{i}. {task[1]}\n"
+                )
+
+            return jsonify({
+                "reply":
+                f"Pending Tasks:\n\n{task_list}"
+            })
     
-    elif ("pending" in message_lower and "task" in message_lower) or ("how many" in message_lower and "task" in message_lower):
+        elif mode == "count":
 
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
 
-        cursor.execute(
-            """
-            SELECT COUNT(*)
-            FROM tasks
-            WHERE completed = 0
-            """
-        )
+            cursor.execute(
+                """
+                SELECT COUNT(*)
+                FROM tasks
+                WHERE completed = 0
+                """
+            )
 
-        count = cursor.fetchone()[0]
+            count = cursor.fetchone()[0]
 
-        conn.close()
+            conn.close()
 
-        return jsonify({
-            "reply":
-            f"You currently have {count} pending tasks."
-        })
+            return jsonify({
+                "reply":
+                f"You currently have {count} pending tasks."
+            })
+        
+        else:
+            return jsonify({
+                "reply": "I couldn't determine whether you wanted the task list or the task count."
+            })
     
     elif ("latest" in message_lower and "note" in message_lower) or ("recent" in message_lower and "note" in message_lower):
 
