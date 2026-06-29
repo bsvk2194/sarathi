@@ -613,8 +613,8 @@ def ask_ai():
             f"Upcoming Events:\n\n{event_list}"
         })
     
-    elif ("storage" in message_lower or "space" in message_lower):
-
+    elif intent == "storage_status":
+        
         total, used, free = shutil.disk_usage(
             "/storage/emulated/0"
         )
