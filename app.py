@@ -768,33 +768,9 @@ def ask_ai():
     """
         })
     
-    elif ("complete task" in message_lower or "finish task" in message_lower or "mark task" in message_lower 
-          or "complete the task" in message_lower or "mark the task" in message_lower or "finish the task" in message_lower):
+    elif intent == "complete_task":
 
-        if "complete task" in message_lower:
-
-            task_name = user_message[len("complete task"):].strip()
-
-        elif "mark task" in message_lower:
-
-            task_name = user_message[len("mark task"):].strip()
-
-        elif "finish task" in message_lower:
-
-            task_name = user_message[len("finish task"):].strip()
-
-        elif "complete the task" in message_lower:
-
-            task_name = user_message[len("complete the task"):].strip()
-
-        elif "mark the task" in message_lower:
-
-            task_name = user_message[len("mark the task"):].strip()
-
-        elif "finish the task" in message_lower:
-
-            task_name = user_message[len("finish the task"):].strip()
-
+        task_name = parameters.get("task", "").strip()
 
         if task_name == "":
 
