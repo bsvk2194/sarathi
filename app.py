@@ -441,6 +441,12 @@ Return:
         json=payload
     )
 
+    '''print("=" * 60)
+    print("CLASSIFIER RESPONSE")
+    print("Status:", response.status_code)
+    print(response.text)
+    print("=" * 60)'''
+
     content = response.json()["choices"][0]["message"]["content"]
 
     content = (
@@ -461,15 +467,7 @@ Return:
             "parameters": {}
         }
 
-# AI assistant route
-@app.route('/ask-ai', methods=['POST'])
-def ask_ai():
-
-    data = request.get_json()
-
-    user_message = data.get("message", "")
-
-    intent_data = classify_intent(user_message)
+def dispatch_intent(intent_data, user_message):
 
     intent = intent_data["intent"]
 
@@ -666,9 +664,7 @@ def ask_ai():
     
     elif intent == "storage_status":
 
-        total, used, free = shutil.disk_usage(
-            "/storage/emulated/0"
-        )
+        total, used, free = shutil.disk_usage(os.getcwd())
 
         used_gb = round(
             used / (1024**3), 2
@@ -690,17 +686,22 @@ def ask_ai():
     
     elif intent == "backup_count":
 
-        backup_folder = (
-            "/storage/emulated/0/SARATHI_SYNC"
-        )
+        if os.name == "nt":
+            backup_folder = os.path.join(os.getcwd(), "backups")
+        else:
+            backup_folder = "/storage/emulated/0/SARATHI_SYNC"
 
-        backup_count = len([
-            f for f in os.listdir(
-                backup_folder
-            )
-            if f.startswith("backup_")
-            and f.endswith(".db")
-        ])
+        if os.path.exists(backup_folder):
+
+            backup_count = len([
+                f for f in os.listdir(backup_folder)
+                if f.startswith("backup_")
+                and f.endswith(".db")
+            ])
+
+        else:
+
+            backup_count = 0
 
         return jsonify({
             "reply":
@@ -1013,14 +1014,26 @@ def ask_ai():
         json=payload
     )
 
-    print(response.status_code)
-    print(response.text)
-
     reply = response.json()["choices"][0]["message"]["content"]
 
     return jsonify({
         "reply": reply
     })
+
+# AI assistant route
+@app.route('/ask-ai', methods=['POST'])
+def ask_ai():
+
+    data = request.get_json()
+
+    user_message = data.get("message", "")
+
+    intent_data = classify_intent(user_message)
+
+    return dispatch_intent(
+        intent_data,
+        user_message
+    )
 
 # Create Backup route
 @app.route('/create-backup', methods=['POST'])
