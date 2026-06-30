@@ -192,8 +192,7 @@ SARATHI Notes
                     <p>${note.content}</p>
 
                     <small class="note-time">
-                        ${new Date(note.created_at)
-                            .toLocaleString()}
+                        ${new Date(note.created_at.replace(" ", "T") + "Z").toLocaleString()}
                     </small>
 
                 </div>
