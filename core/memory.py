@@ -1,0 +1,1 @@
+LAST_TASK_RESULTS = []
