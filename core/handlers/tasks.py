@@ -6,6 +6,7 @@ from core.config import DATABASE
 from core.backup import create_backup
 from core.memory import LAST_TASK_RESULTS
 
+# pending tasks handler
 def handle_pending_tasks(mode):
 
     global LAST_TASK_RESULTS
