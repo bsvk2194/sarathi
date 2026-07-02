@@ -1,9 +1,7 @@
 import os
 import shutil
-
+from core.config import DATABASE
 from datetime import datetime
-
-DATABASE = "sarathi.db"
 
 def create_backup():
 

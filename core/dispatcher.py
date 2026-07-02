@@ -2,7 +2,7 @@ import sqlite3
 from flask import jsonify
 from core.backup import create_backup
 from core.memory import LAST_TASK_RESULTS
-from core.handler import (
+from core.handlers import (
     handle_latest_note,
     handle_storage_status,
     handle_backup_count,
@@ -13,8 +13,8 @@ from core.handler import (
     handle_add_note,
     handle_upcoming_events,
     handle_add_event,
-    handle_general_chat,
-    handle_create_backup
+    handle_create_backup,
+    handle_general_chat
 )
 
 DATABASE = "sarathi.db"
@@ -82,77 +82,16 @@ def dispatch_intent(intent_data, user_message):
         parameters.get("date", "")
     )
     
-    elif ("complete the" in message_lower):
-
-        if not LAST_TASK_RESULTS:
-
-            return jsonify({
-                "reply":
-                "No recent task list found."
-            })
-
-        words = message_lower.split()
-
-        if len(words) < 4:
-
-            return jsonify({
-                "reply":
-                "Specify which task."
-            })
-
-        position_word = words[2]
-
-        mapping = {
-            "first":0,
-            "second":1,
-            "third":2,
-            "fourth":3,
-            "fifth":4
-        }
-
-        if position_word not in mapping:
-
-            return jsonify({
-                "reply":
-                "Unknown task position."
-            })
-
-        index = mapping[position_word]
-
-        if index >= len(LAST_TASK_RESULTS):
-
-            return jsonify({
-                "reply":
-                "Task number out of range."
-            })
-
-        task_id =LAST_TASK_RESULTS[index][0]
-
-        task_name =LAST_TASK_RESULTS[index][1]
-
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
-
-        cursor.execute(
-            """
-            UPDATE tasks
-            SET completed=1
-            WHERE id=?
-            """,
-            (task_id,)
-        )
-
-        conn.commit()
-        create_backup()
-        conn.close()
-
-        return jsonify({
-            "reply":
-            f"Completed task: {task_name}"
-        })
     
     elif intent == "create_backup":
 
         return handle_create_backup()
 
     return handle_general_chat(user_message)
+
+''' To do  (Memory Manager):
+    # Support follow-up commands like:
+    # "complete the first one"
+    # "delete the second note"
+    # "move it to tomorrow" '''
+    

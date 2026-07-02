@@ -3,9 +3,11 @@ import sqlite3
 import os
 from flask import Flask, jsonify, request, render_template
 from core.classifier import classify_intent
-from core.handler import (handle_latest_note, handle_storage_status, handle_backup_count, handle_create_backup,
-    handle_pending_tasks, handle_add_task, handle_complete_task,
-    handle_search_notes, handle_add_note,handle_upcoming_events, handle_add_event, handle_general_chat)
+from core.handlers import (handle_latest_note, handle_storage_status, handle_backup_count,
+    handle_pending_tasks, handle_complete_task, handle_add_task,
+    handle_search_notes, handle_add_note,
+    handle_upcoming_events, handle_add_event,
+    handle_create_backup, handle_general_chat)
 from core.backup import (create_backup, cleanup_backups)
 from core.dispatcher import dispatch_intent
 
@@ -118,6 +120,7 @@ def ask_ai():
     user_message = data.get("message", "")
 
     intent_data = classify_intent(user_message)
+    print(intent_data)
 
     return dispatch_intent(
         intent_data,
