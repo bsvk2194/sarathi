@@ -1,3 +1,5 @@
+from flask import jsonify
+
 MEMORY = {
 
     "last_task_results": [],
@@ -44,6 +46,10 @@ def clear_memory():
         "last_reply": None
 
     })
+
+def remember_reply(reply):
+    set_memory("last_reply", reply)
+    return jsonify({"reply": reply})
 
 def print_memory():
 

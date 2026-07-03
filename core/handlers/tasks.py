@@ -4,12 +4,11 @@ from flask import jsonify
 
 from core.config import DATABASE
 from core.backup import create_backup
-from core.memory import set_memory
+from core.memory import set_memory, remember_reply  
 
 # pending tasks handler
 def handle_pending_tasks(mode):
 
-    global LAST_TASK_RESULTS
 
     if mode == "list":
 
@@ -45,10 +44,9 @@ def handle_pending_tasks(mode):
 
             task_list += f"{i}. {task[1]}\n"
 
-        return jsonify({
-            "reply":
-            f"Pending Tasks:\n\n{task_list}"
-        })
+        reply = f"Pending Tasks:\n\n{task_list}"
+
+        return remember_reply(reply)
 
     elif mode == "count":
 
@@ -67,15 +65,19 @@ def handle_pending_tasks(mode):
 
         conn.close()
 
-        return jsonify({
-            "reply":
-            f"You currently have {count} pending tasks. Would you like to see the list of pending tasks?"
-        })
+        reply = (
+    f"You currently have {count} pending tasks. "
+    "Would you like to see the list of pending tasks?"
+)
 
-    return jsonify({
-        "reply":
-        "I couldn't determine whether you wanted the task list or the task count."
-    })
+        return remember_reply(reply)
+
+    reply = (
+    "I couldn't determine whether you wanted "
+    "the task list or the task count."
+)
+
+    return remember_reply(reply)
 
 # complete task handler
 def handle_complete_task(task_name):
@@ -84,9 +86,9 @@ def handle_complete_task(task_name):
 
     if task_name == "":
 
-        return jsonify({
-            "reply": "Please specify which task to complete."
-        })
+        reply = "Please specify which task to complete."
+
+        return remember_reply(reply)
 
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -108,9 +110,9 @@ def handle_complete_task(task_name):
 
         conn.close()
 
-        return jsonify({
-            "reply": "I couldn't find a matching pending task."
-        })
+        reply = "I couldn't find a matching pending task."
+
+        return remember_reply(reply)
 
     cursor.execute(
         """
@@ -127,10 +129,9 @@ def handle_complete_task(task_name):
 
     conn.close()
 
-    return jsonify({
-        "reply":
-        f"Completed task: {task[1]}"
-    })
+    reply = f"Completed task: {task[1]}"
+
+    return remember_reply(reply)
 
 # add task handler
 def handle_add_task(task_text):
@@ -173,13 +174,12 @@ def handle_add_task(task_text):
 
     conn.close()
 
-    return jsonify({
-        "reply":
-        f"""Task added successfully.
+    reply = f"""Task added successfully.
 
-Task:
-{task_text}
+        Task:
+        {task_text}
 
-Pending tasks: {pending_tasks}
-"""
-    })
+        Pending tasks: {pending_tasks}
+        """
+
+    return remember_reply(reply)
