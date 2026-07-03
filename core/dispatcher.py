@@ -1,7 +1,7 @@
 import sqlite3
 from flask import jsonify
 from core.backup import create_backup
-from core.memory import LAST_TASK_RESULTS
+from core.memory import set_memory, get_memory, print_memory
 from core.handlers import (
     handle_latest_note,
     handle_storage_status,
@@ -25,9 +25,11 @@ def dispatch_intent(intent_data, user_message):
 
     parameters = intent_data["parameters"]
 
-    message_lower = user_message.lower()
+    set_memory("last_intent", intent)
+    set_memory("last_parameters", parameters)
+    #print_memory()
 
-    global LAST_TASK_RESULTS
+    message_lower = user_message.lower()
     
     if intent == "pending_tasks":
 

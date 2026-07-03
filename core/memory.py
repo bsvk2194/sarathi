@@ -1,1 +1,50 @@
-LAST_TASK_RESULTS = []
+MEMORY = {
+
+    "last_task_results": [],
+
+    "last_note_results": [],
+
+    "last_event_results": [],
+
+    "last_intent": None,
+
+    "last_parameters": {},
+
+    "last_reply": None
+
+}
+
+
+def set_memory(key, value):
+
+    MEMORY[key] = value
+
+
+def get_memory(key):
+
+    return MEMORY.get(key)
+
+
+def clear_memory():
+
+    MEMORY.clear()
+
+    MEMORY.update({
+
+        "last_task_results": [],
+
+        "last_note_results": [],
+
+        "last_event_results": [],
+
+        "last_intent": None,
+
+        "last_parameters": {},
+
+        "last_reply": None
+
+    })
+
+def print_memory():
+
+    print(MEMORY)
