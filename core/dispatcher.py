@@ -1,13 +1,14 @@
 import sqlite3
 from flask import jsonify
 from core.backup import create_backup
-from core.memory import set_memory, get_memory, print_memory
+from core.memory import resolve_reference, set_memory, get_memory, print_memory
 from core.handlers import (
     handle_latest_note,
     handle_storage_status,
     handle_backup_count,
     handle_pending_tasks,
     handle_complete_task,
+    handle_complete_task_by_id,
     handle_add_task,
     handle_search_notes,
     handle_add_note,
@@ -73,9 +74,20 @@ def dispatch_intent(intent_data, user_message):
     
     elif intent == "complete_task":
 
-         return handle_complete_task(
-        parameters.get("task", "")
-    )
+        task = parameters.get("task", "").strip()
+
+        resolved = resolve_reference(
+            task,
+            "last_task_results"
+        )
+
+        if resolved:
+
+            task_id = resolved[0]
+
+            return handle_complete_task_by_id(task_id)
+
+        return handle_complete_task(task)
     
     elif intent == "add_event":
 

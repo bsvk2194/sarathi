@@ -120,7 +120,7 @@ def ask_ai():
     user_message = data.get("message", "")
 
     intent_data = classify_intent(user_message)
-    #print(intent_data)
+    print(intent_data)
 
     return dispatch_intent(
         intent_data,

@@ -133,6 +133,51 @@ def handle_complete_task(task_name):
 
     return remember_reply(reply)
 
+# complete task by ID handler
+def handle_complete_task_by_id(task_id):
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT task
+        FROM tasks
+        WHERE id = ?
+        AND completed = 0
+        """,
+        (task_id,)
+    )
+
+    task = cursor.fetchone()
+
+    if not task:
+
+        conn.close()
+
+        reply = "I couldn't find that pending task."
+
+        return remember_reply(reply)
+
+    cursor.execute(
+        """
+        UPDATE tasks
+        SET completed = 1
+        WHERE id = ?
+        """,
+        (task_id,)
+    )
+
+    conn.commit()
+
+    create_backup()
+
+    conn.close()
+
+    reply = f"Completed task: {task[0]}"
+
+    return remember_reply(reply)
+
 # add task handler
 def handle_add_task(task_text):
 

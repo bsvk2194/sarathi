@@ -6,6 +6,7 @@ from .storage import (
 from .tasks import (
     handle_pending_tasks,
     handle_complete_task,
+    handle_complete_task_by_id,
     handle_add_task
 )
 from .notes import (

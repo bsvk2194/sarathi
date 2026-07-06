@@ -201,6 +201,37 @@ Examples:
 - Complete task buy milk.
 - Mark buy milk as done.
 - Finish task buy milk.
+- Complete the first one.
+- Complete the second one.
+- Complete the third one.
+- Complete the last one.
+- Complete the first task.
+- Mark the second one as done.
+- Finish the third task.
+
+Never classify commands beginning with:
+
+Complete
+Finish
+Mark
+
+as add_task.
+
+They always refer to complete_task.
+
+If the user refers to a task by position
+(first, second, third, fourth, fifth, last),
+
+the intent MUST be:
+
+{
+    "intent":"complete_task",
+    "parameters":{
+        "task":"first one"
+    }
+}
+
+else: 
 
 Return:
 
