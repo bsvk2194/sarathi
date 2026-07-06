@@ -2,8 +2,7 @@ import os
 import shutil
 import sqlite3
 
-from flask import jsonify
-
+from core.memory import remember_reply
 from core.config import DATABASE
 
 # latest note handler  
@@ -27,14 +26,13 @@ def handle_latest_note():
 
     if not note:
 
-        return jsonify({
-            "reply": "You do not have any notes yet."
-        })
+        reply = "You do not have any notes yet."
 
-    return jsonify({
-        "reply":
-        f"Latest Note:\n\n{note[0]}"
-    })
+        return remember_reply(reply)
+
+    reply = f"Latest Note:\n\n{note[0]}"
+
+    return remember_reply(reply)
 
 # storage status handler
 def handle_storage_status():
@@ -49,15 +47,13 @@ def handle_storage_status():
         free / (1024**3), 2
     )
 
-    return jsonify({
-        "reply":
-        f"""
+    reply = f"""
     Storage Status
 
     Used: {used_gb} GB
     Free: {free_gb} GB
     """
-    })
+    return remember_reply(reply)
 
 # backup count handler
 def handle_backup_count():
@@ -79,7 +75,6 @@ def handle_backup_count():
 
         backup_count = 0
 
-    return jsonify({
-        "reply":
-        f"You currently have {backup_count} backups."
-    })
+    reply = f"You currently have {backup_count} backups."
+
+    return remember_reply(reply)

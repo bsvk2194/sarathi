@@ -1,10 +1,9 @@
 import sqlite3
 import dateparser
 
-from flask import jsonify
-
 from core.config import DATABASE
 from core.backup import create_backup
+from core.memory import set_memory, remember_reply
 
 # upcoming events handler
 def handle_upcoming_events():
@@ -27,9 +26,9 @@ def handle_upcoming_events():
 
     if not events:
 
-        return jsonify({
-            "reply": "No upcoming events found."
-        })
+        reply = "No upcoming events found."
+
+        return remember_reply(reply)
 
     event_list = ""
 
@@ -39,10 +38,9 @@ def handle_upcoming_events():
             f"{i}. {event[0]} ({event[1]})\n"
         )
 
-    return jsonify({
-        "reply":
-        f"Upcoming Events:\n\n{event_list}"
-    })
+    reply = f"Upcoming Events:\n\n{event_list}"
+
+    return remember_reply(reply)
 
 # add event handler
 def handle_add_event(title, event_date):
@@ -67,10 +65,8 @@ def handle_add_event(title, event_date):
 
     if not parsed_date:
 
-        return jsonify({
-            "reply":
-            "I couldn't understand the date."
-        })
+        reply = "I couldn't understand the date."
+        return remember_reply(reply)
 
     event_date = parsed_date.strftime("%Y-%m-%d")
 
@@ -95,9 +91,7 @@ def handle_add_event(title, event_date):
 
     conn.close()
 
-    return jsonify({
-        "reply":
-        f"""Event added successfully.
+    reply = f"""Event added successfully.
 
 Title:
 {title}
@@ -105,4 +99,4 @@ Title:
 Date:
 {event_date}
 """
-    })
+    return remember_reply(reply)

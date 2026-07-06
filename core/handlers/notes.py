@@ -1,6 +1,6 @@
 import sqlite3
 
-from flask import jsonify
+from core.memory import remember_reply
 
 from core.config import DATABASE
 from core.backup import create_backup
@@ -12,10 +12,9 @@ def handle_search_notes(keyword):
 
     if keyword == "":
 
-        return jsonify({
-            "reply":
-            "Please tell me what to search for."
-        })
+        reply = "Please tell me what to search for."
+
+        return remember_reply(reply)
 
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -36,10 +35,9 @@ def handle_search_notes(keyword):
 
     if not notes:
 
-        return jsonify({
-            "reply":
-            f"No notes found containing '{keyword}'."
-        })
+        reply = f"No notes found containing '{keyword}'."
+
+        return remember_reply(reply)
 
     notes_list = ""
 
@@ -49,12 +47,12 @@ def handle_search_notes(keyword):
             f"{i}. {note[0]}\n\n"
         )
 
-    return jsonify({
-        "reply":
-        f"""Found {len(notes)} matching note(s).
-        {notes_list}
-        """
-    })
+    reply = f"""Found {len(notes)} matching note(s).
+
+{notes_list}
+"""
+
+    return remember_reply(reply)
 
 # add note handler
 def handle_add_note(note_text):
@@ -63,9 +61,9 @@ def handle_add_note(note_text):
 
     if note_text == "":
 
-        return jsonify({
-            "reply": "Please provide a note."
-        })
+        reply = "Please provide a note."
+
+        return remember_reply(reply)
 
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -93,13 +91,12 @@ def handle_add_note(note_text):
 
     conn.close()
 
-    return jsonify({
-        "reply":
-        f"""Note saved successfully.
+    reply = f"""Note saved successfully.
 
 Note:
 {note_text}
 
 Total notes: {total_notes}
 """
-    })
+
+    return remember_reply(reply)

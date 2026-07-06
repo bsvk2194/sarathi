@@ -49,8 +49,8 @@ def clear_memory():
 
 def remember_reply(reply):
     set_memory("last_reply", reply)
+    print(MEMORY)
     return jsonify({"reply": reply})
-
 def print_memory():
 
     print(MEMORY)
