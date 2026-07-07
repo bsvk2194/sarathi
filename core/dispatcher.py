@@ -1,7 +1,7 @@
 import sqlite3
 from flask import jsonify
 from core.backup import create_backup
-from core.memory import resolve_reference, set_memory, get_memory, print_memory
+from core.memory import resolve_reference, set_memory, get_memory, print_memory, set_conversation_state
 from core.handlers import (
     handle_latest_note,
     handle_storage_status,
@@ -34,15 +34,30 @@ def dispatch_intent(intent_data, user_message):
     
     if intent == "pending_tasks":
 
+        set_conversation_state(
+            "tasks",
+            "listing"
+        )
+
         return handle_pending_tasks(
-        parameters.get("mode", "")
-    )
+            parameters.get("mode", "")
+        )
     
     elif intent == "latest_note":
+
+        set_conversation_state(
+            "notes",
+            "viewing"
+        )
 
         return handle_latest_note()
     
     elif intent == "search_notes":
+
+        set_conversation_state(
+        "notes",
+        "searching"
+    )
 
         return handle_search_notes(
         parameters.get("query", "")
@@ -50,23 +65,48 @@ def dispatch_intent(intent_data, user_message):
     
     elif intent == "upcoming_events":
 
+        set_conversation_state(
+            "events",
+            "listing"
+        )
+
         return handle_upcoming_events()
     
     elif intent == "storage_status":
+
+        set_conversation_state(
+        "system",
+        "storage"
+    )
 
         return handle_storage_status()
     
     elif intent == "backup_count":
 
+        set_conversation_state(
+        "system",
+        "backup"
+    )
+
         return handle_backup_count()
 
     elif intent == "add_task":
+
+        set_conversation_state(
+            "tasks",
+            "creating"
+        )
 
         return handle_add_task(
         parameters.get("task", "")
     )
     
     elif intent == "add_note":
+
+        set_conversation_state(
+        "notes",
+        "creating"
+    )
 
         return handle_add_note(
         parameters.get("note", "")
@@ -75,6 +115,11 @@ def dispatch_intent(intent_data, user_message):
     elif intent == "complete_task":
 
         task = parameters.get("task", "").strip()
+
+        set_conversation_state(
+            "tasks",
+            "completing"
+        )
 
         resolved = resolve_reference(
             task,
@@ -91,6 +136,11 @@ def dispatch_intent(intent_data, user_message):
     
     elif intent == "add_event":
 
+        set_conversation_state(
+            "events",
+            "creating"
+        )
+
         return handle_add_event(
         parameters.get("title", ""),
         parameters.get("date", "")
@@ -99,7 +149,17 @@ def dispatch_intent(intent_data, user_message):
     
     elif intent == "create_backup":
 
+        set_conversation_state(
+            "system",
+            "backup"
+        )
+
         return handle_create_backup()
+    
+    set_conversation_state(
+        "chat",
+        "conversation"
+    )
 
     return handle_general_chat(user_message)
 

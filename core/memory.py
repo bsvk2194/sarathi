@@ -12,7 +12,15 @@ MEMORY = {
 
     "last_parameters": {},
 
-    "last_reply": None
+    "last_reply": None,
+
+    "conversation_state": {
+
+    "domain": None,
+
+    "action": None
+
+    }
 
 }
 
@@ -58,6 +66,21 @@ def clear_memory():
 
     })
 
+def set_conversation_state(domain, action):
+
+    MEMORY["conversation_state"] = {
+
+        "domain": domain,
+
+        "action": action
+
+    }
+    #print_conversation_state()  
+
+def get_conversation_state():
+
+    return MEMORY["conversation_state"]
+
 # Future use:
 #
 # resolve_reference("first one", "last_task_results")
@@ -95,6 +118,10 @@ def remember_reply(reply):
     set_memory("last_reply", reply)
     #print(MEMORY)
     return jsonify({"reply": reply})
+
+def print_conversation_state():
+
+    print(MEMORY["conversation_state"])
 
 def print_memory():
 
