@@ -2,8 +2,6 @@ from flask import jsonify
 
 MEMORY = {
 
-    "last_task_results": [],
-
     "last_note_results": [],
 
     "last_event_results": [],
@@ -19,6 +17,13 @@ MEMORY = {
     "domain": None,
 
     "action": None
+
+    },
+    "recent_results": {
+
+    "domain": None,
+
+    "results": []
 
     }
 
@@ -77,9 +82,24 @@ def set_conversation_state(domain, action):
     }
     #print_conversation_state()  
 
+def set_recent_results(domain, results):
+
+    MEMORY["recent_results"] = {
+
+        "domain": domain,
+
+        "results": results
+
+    }
+    #print_recent_results()
+
 def get_conversation_state():
 
     return MEMORY["conversation_state"]
+
+def get_recent_results():
+
+    return MEMORY["recent_results"]
 
 # Future use:
 #
@@ -91,9 +111,7 @@ def get_conversation_state():
 # This resolver is intentionally generic so it can be reused
 # across all SARATHI modules.
 
-def resolve_reference(reference, memory_key):
-
-    items = get_memory(memory_key)
+def resolve_reference(reference, items):
 
     if not items:
         return None
@@ -111,8 +129,17 @@ def resolve_reference(reference, memory_key):
                 return items[index]
 
             return None
-        
+
     return None
+
+def resolve_recent_reference(reference):
+
+    recent = get_recent_results()
+
+    return resolve_reference(
+        reference,
+        recent["results"]
+    )
 
 def remember_reply(reply):
     set_memory("last_reply", reply)
@@ -122,6 +149,10 @@ def remember_reply(reply):
 def print_conversation_state():
 
     print(MEMORY["conversation_state"])
+
+def print_recent_results():
+
+    print(MEMORY["recent_results"])
 
 def print_memory():
 

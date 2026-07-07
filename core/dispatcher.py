@@ -1,7 +1,7 @@
 import sqlite3
 from flask import jsonify
 from core.backup import create_backup
-from core.memory import resolve_reference, set_memory, get_memory, print_memory, set_conversation_state
+from core.memory import resolve_recent_reference, resolve_reference, set_memory, get_memory, print_memory, set_conversation_state
 from core.handlers import (
     handle_latest_note,
     handle_storage_status,
@@ -121,10 +121,7 @@ def dispatch_intent(intent_data, user_message):
             "completing"
         )
 
-        resolved = resolve_reference(
-            task,
-            "last_task_results"
-        )
+        resolved = resolve_recent_reference(task) 
 
         if resolved:
 

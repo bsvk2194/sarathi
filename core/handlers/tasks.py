@@ -4,7 +4,7 @@ from flask import jsonify
 
 from core.config import DATABASE
 from core.backup import create_backup
-from core.memory import set_memory, remember_reply  
+from core.memory import get_recent_results, remember_reply, set_recent_results
 
 # pending tasks handler
 def handle_pending_tasks(mode):
@@ -25,10 +25,12 @@ def handle_pending_tasks(mode):
 
         tasks = cursor.fetchall()
 
-        set_memory(
-            "last_task_results",
+        set_recent_results(
+            "tasks",
             tasks
         )
+
+        #print(get_recent_results())
 
         conn.close()
 
