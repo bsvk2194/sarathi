@@ -1,5 +1,7 @@
 from flask import jsonify
 
+MAX_CONTEXT_STACK = 20 
+
 MEMORY = {
 
     "last_note_results": [],
@@ -25,7 +27,8 @@ MEMORY = {
 
     "results": []
 
-    }
+    },
+    "context_stack": []
 
 }
 
@@ -73,6 +76,16 @@ def clear_memory():
 
 def set_conversation_state(domain, action):
 
+    current = MEMORY["conversation_state"]
+
+    if current["domain"] is not None:
+
+        push_context(current.copy())
+
+    if len(MEMORY["context_stack"]) > MAX_CONTEXT_STACK:
+
+        MEMORY["context_stack"].pop(0)
+
     MEMORY["conversation_state"] = {
 
         "domain": domain,
@@ -80,7 +93,14 @@ def set_conversation_state(domain, action):
         "action": action
 
     }
+    print_context_stack()
     #print_conversation_state()  
+    print("\n===== CONTEXT STACK =====")
+    print_context_stack()
+
+    print("CURRENT STATE:")
+    print(get_conversation_state())
+    print("=========================\n")
 
 def set_recent_results(domain, results):
 
@@ -100,6 +120,25 @@ def get_conversation_state():
 def get_recent_results():
 
     return MEMORY["recent_results"]
+
+
+def push_context(context):
+
+    MEMORY["context_stack"].append(context)
+
+def pop_context():
+
+    if not MEMORY["context_stack"]:
+        return None
+
+    return MEMORY["context_stack"].pop()
+
+def peek_context():
+
+    if not MEMORY["context_stack"]:
+        return None
+
+    return MEMORY["context_stack"][-1]
 
 # Future use:
 #
@@ -153,6 +192,10 @@ def print_conversation_state():
 def print_recent_results():
 
     print(MEMORY["recent_results"])
+
+def print_context_stack():
+
+    print(MEMORY["context_stack"])
 
 def print_memory():
 
