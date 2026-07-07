@@ -609,14 +609,7 @@ def delete_event(event_id):
         "message":"Event deleted"
     })
 
-from core.memory import (
-    peek_context,
-    pop_context
-)
 
-print(peek_context())
-print(pop_context())
-print(peek_context())
 
 # Start server
 if __name__ == '__main__':

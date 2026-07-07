@@ -93,14 +93,14 @@ def set_conversation_state(domain, action):
         "action": action
 
     }
-    print_context_stack()
+    #print_context_stack()
     #print_conversation_state()  
-    print("\n===== CONTEXT STACK =====")
+    '''print("\n===== CONTEXT STACK =====")
     print_context_stack()
 
     print("CURRENT STATE:")
     print(get_conversation_state())
-    print("=========================\n")
+    print("=========================\n")'''
 
 def set_recent_results(domain, results):
 
