@@ -1,7 +1,7 @@
 import sqlite3
 from flask import jsonify
 from core.backup import create_backup
-from core.memory import resolve_recent_reference, resolve_reference, set_memory, get_memory, print_memory, set_conversation_state
+from core.memory import get_pending_action, remember_reply, resolve_recent_reference, resolve_reference, set_memory, get_memory, print_memory, set_conversation_state
 from core.handlers import (
     handle_latest_note,
     handle_storage_status,
@@ -18,9 +18,14 @@ from core.handlers import (
     handle_general_chat
 )
 from core.handlers.knowledge import (
+    handle_finish_memory_edit,
+    handle_forget_memory,
     handle_remember,
     handle_list_memories,
-    handle_search_memories
+    handle_search_memories,
+    handle_forget_memories,
+    handle_update_memory,
+    handle_edit_memory_reference    
 )
 
 DATABASE = "sarathi.db"
@@ -30,6 +35,17 @@ def dispatch_intent(intent_data, user_message):
     intent = intent_data["intent"]
 
     parameters = intent_data["parameters"]
+
+    pending = get_pending_action()  
+
+    if pending is not None and pending["type"] == "edit_memory":
+
+        return handle_finish_memory_edit(
+
+        pending["memory_id"],
+
+        user_message
+    )
 
     set_memory("last_intent", intent)
     set_memory("last_parameters", parameters)
@@ -188,6 +204,73 @@ def dispatch_intent(intent_data, user_message):
         return handle_search_memories(
             parameters.get("query", "")
         )
+    
+    elif intent == "forget_memory":
+
+            set_conversation_state(
+                "knowledge",
+                "deleting"
+            )
+
+            resolved = resolve_recent_reference(
+                parameters.get("reference", "")
+            )
+
+            if resolved is None:
+
+                return remember_reply(
+                    "I couldn't determine which memory you meant."
+                )
+
+            return handle_forget_memory(
+                resolved[0]
+            )
+    
+    elif intent == "forget_memory_search":
+
+        set_conversation_state(
+            "knowledge",
+            "deleting"
+        )
+
+        return handle_forget_memories(
+            parameters.get("query", "")
+        )
+    
+    elif intent == "update_memory":
+
+        set_conversation_state(
+            "knowledge",
+            "editing"
+        )
+
+        return handle_update_memory(
+
+            parameters.get("query", ""),
+
+            parameters.get("replacement", "")
+        )
+    
+    elif intent == "edit_memory_reference":
+
+        set_conversation_state(
+            "knowledge",
+            "editing"
+        )
+
+        resolved = resolve_recent_reference(
+            parameters.get("reference", "")
+        )
+
+        if resolved is None:
+
+            return remember_reply(
+                "I couldn't determine which memory you meant."
+            )
+
+        return handle_edit_memory_reference(
+            resolved[0]
+        )
 
     set_conversation_state(
         "chat",
@@ -196,9 +279,5 @@ def dispatch_intent(intent_data, user_message):
 
     return handle_general_chat(user_message)
 
-''' To do  (Memory Manager):
-    # Support follow-up commands like:
-    # "complete the first one"
-    # "delete the second note"
-    # "move it to tomorrow" '''
+
     

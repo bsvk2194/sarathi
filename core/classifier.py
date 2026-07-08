@@ -376,13 +376,107 @@ Return:
 
 --------------------------------------------------
 
+15. forget_memory   
+
+Use when the user wants to delete a specific memory.
+
+Examples:
+
+- Forget the first one.
+- Forget the second memory.
+- Delete the third memory.
+- Remove the first one I told you.
+
+Return: 
+
+{
+    "intent":"forget_memory",
+    "parameters":{
+        "reference":"first"
+    }
+}
+
+--------------------------------------------------
+
+16. forget_memories
+
+Use when the user wants to delete all memories.
+
+Examples:
+
+- Forget everything about Python.
+- Forget anything related to Flask.
+- Delete memories about Linux.
+- Forget all memories about SQL.
+- Remove everything you know about Arduino.
+
+Return: 
+
+{
+    "intent":"forget_memory_search",
+    "parameters":{
+        "query":"Python"
+    }
+}
+
+---------------------------------------------------
+
+17. update_memory   
+
+Use when the user wants to update a specific memory.
+
+Examples:
+
+- Replace VS Code with Cursor.
+- Change Python to Rust.
+- Update Flask to FastAPI.
+- Replace Hyderabad with Bengaluru.
+
+Return:
+
+{
+    "intent":"update_memory",
+    "parameters":{
+
+        "query":"VS Code",
+
+        "replacement":"Cursor"
+
+    }
+}
+
+---------------------------------------------------
+
+18. edit_memory_reference
+
+Use when the user wants to edit a specific memory by its ID.
+
+Examples:
+
+- Edit the first one.
+- Edit the second memory.
+- Modify the third memory.
+- Change the first memory.
+- Change the second one.
+
+Return:
+
+{
+    "intent":"edit_memory_reference",
+    "parameters":{
+        "reference":"second"
+    }
+}
+
+----------------------------------------------------
+
 If the user explicitly asks what SARATHI remembers about them, 
 or asks to list or search saved memories,
 never classify the request as general_chat.
 
---------------------------------------------------
+---------------------------------------------------
 
-15. general_chat
+19. general_chat
 
 Use this only if none of the above intents apply.
 

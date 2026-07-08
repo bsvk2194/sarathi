@@ -627,8 +627,6 @@ def delete_event(event_id):
         "message":"Event deleted"
     })
 
-
-
 # Start server
 if __name__ == '__main__':
 

@@ -28,7 +28,9 @@ MEMORY = {
     "results": []
 
     },
-    "context_stack": []
+    "context_stack": [],
+
+    "pending_action": None
 
 }
 
@@ -121,6 +123,17 @@ def get_recent_results():
 
     return MEMORY["recent_results"]
 
+def set_pending_action(action):
+
+    MEMORY["pending_action"] = action
+
+def get_pending_action():
+
+    return MEMORY["pending_action"]
+
+def clear_pending_action():
+
+    MEMORY["pending_action"] = None
 
 def push_context(context):
 
@@ -139,6 +152,8 @@ def peek_context():
         return None
 
     return MEMORY["context_stack"][-1]
+
+
 
 # Future use:
 #
@@ -196,6 +211,10 @@ def print_recent_results():
 def print_context_stack():
 
     print(MEMORY["context_stack"])
+
+def print_pending_action():
+
+    print(MEMORY["pending_action"])
 
 def print_memory():
 
