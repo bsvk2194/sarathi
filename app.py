@@ -49,6 +49,24 @@ def init_db():
         )
     """)
 
+    cursor.execute(
+    """
+    CREATE TABLE IF NOT EXISTS memories (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        content TEXT NOT NULL,
+
+        importance INTEGER DEFAULT 1,
+
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+    )
+    """
+)
+
     conn.commit()
     conn.close()
 

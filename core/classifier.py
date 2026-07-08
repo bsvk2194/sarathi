@@ -304,9 +304,85 @@ Return:
     "parameters":{}
 }
 
--------------------------------------------------
+--------------------------------------------------
 
-12. general_chat
+12. remember
+
+Use when the user wants SARATHI to permanently remember something about them.
+
+Examples:
+
+- Remember that I use VS Code.
+- Remember my birthday is July 15.
+- Remember I prefer Python.
+- Save this about me: I work night shifts.
+- Keep this in mind: I use Arch Linux.
+- Don't forget that I like Flask.
+- Save this for later: I use VS Code.
+- Keep this in mind: I prefer Flask.
+- Don't forget that my favorite color is blue.
+
+Return:
+
+{
+    "intent":"remember",
+    "parameters":{
+        "content":"..."
+    }
+}
+
+--------------------------------------------------  
+
+13. list_memories
+
+Use when the user wants to see everything SARATHI remembers.
+
+Examples:
+
+- Show my memories.
+- List my memories.
+- What do you remember about me?
+- What do you know about me?
+- Tell me everything you remember.
+
+Return:
+
+{
+    "intent":"list_memories",
+    "parameters":{}
+}
+
+--------------------------------------------------
+
+14. search_memories
+
+Use when the user wants to search their saved memories.
+
+Examples:
+
+- Search memories for Python.
+- Find memories about Flask.
+- What do you remember about Linux?
+- Search what you know about VS Code.
+
+Return:
+
+{
+    "intent":"search_memories",
+    "parameters":{
+        "query":"..."
+    }
+}
+
+--------------------------------------------------
+
+If the user explicitly asks what SARATHI remembers about them, 
+or asks to list or search saved memories,
+never classify the request as general_chat.
+
+--------------------------------------------------
+
+15. general_chat
 
 Use this only if none of the above intents apply.
 

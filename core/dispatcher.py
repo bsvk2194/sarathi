@@ -17,6 +17,11 @@ from core.handlers import (
     handle_create_backup,
     handle_general_chat
 )
+from core.handlers.knowledge import (
+    handle_remember,
+    handle_list_memories,
+    handle_search_memories
+)
 
 DATABASE = "sarathi.db"
 
@@ -153,6 +158,37 @@ def dispatch_intent(intent_data, user_message):
 
         return handle_create_backup()
     
+    elif intent == "remember":
+
+        set_conversation_state(
+            "knowledge",
+            "creating"
+        )
+
+        return handle_remember(
+            parameters.get("content", "")
+        )
+    
+    elif intent == "list_memories":
+
+        set_conversation_state(
+            "knowledge",
+            "listing"
+        )
+
+        return handle_list_memories()
+    
+    elif intent == "search_memories":
+
+        set_conversation_state(
+            "knowledge",
+            "searching"
+        )
+
+        return handle_search_memories(
+            parameters.get("query", "")
+        )
+
     set_conversation_state(
         "chat",
         "conversation"
