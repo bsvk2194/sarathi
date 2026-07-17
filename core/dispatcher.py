@@ -22,6 +22,7 @@ from core.handlers.knowledge import (
     handle_forget_memory,
     handle_remember,
     handle_list_memories,
+    handle_retrieve_semantic_memories,
     handle_search_memories,
     handle_forget_memories,
     handle_update_memory,
@@ -182,7 +183,8 @@ def dispatch_intent(intent_data, user_message):
         )
 
         return handle_remember(
-            parameters.get("content", "")
+            parameters.get("content", ""),
+            parameters.get("importance", 1)
         )
     
     elif intent == "list_memories":
@@ -271,7 +273,20 @@ def dispatch_intent(intent_data, user_message):
         return handle_edit_memory_reference(
             resolved[0]
         )
+    
+    elif intent == "semantic_memory_search":
 
+        set_conversation_state(
+            "knowledge",
+            "retrieving"
+        )
+
+        return handle_retrieve_semantic_memories(
+
+            parameters.get("query", "")
+
+        )
+    
     set_conversation_state(
         "chat",
         "conversation"

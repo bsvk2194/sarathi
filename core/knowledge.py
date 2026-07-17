@@ -2,18 +2,20 @@ import sqlite3
 
 from core.config import DATABASE
 from core.backup import create_backup
+from core.llm import find_similar_memories, retrieve_memory_numbers, reason_over_memories
 
-def remember(content):
+def remember(content, importance = 1):
 
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     cursor.execute(
         """
-        INSERT INTO memories (content)
-        VALUES (?)
+        INSERT INTO memories
+        (content, importance)
+        VALUES (?, ?)
         """,
-        (content,)
+        (content, importance)
     )
 
     conn.commit()
@@ -237,3 +239,89 @@ def update_memory_by_id(memory_id, new_content):
         memory[0],
         new_content
     )
+
+def retrieve_semantic_memories(query):
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT id, content
+        FROM memories
+        ORDER BY created_at DESC
+        """
+    )
+
+    memories = cursor.fetchall()
+
+    conn.close()
+
+    memory_numbers = retrieve_memory_numbers(
+        query,
+        memories
+    )
+    relevant_memories = []
+
+    for number in memory_numbers:
+
+        if 1 <= number <= len(memories):
+
+            relevant_memories.append(
+                memories[number - 1]
+            )
+
+    return relevant_memories
+
+def find_duplicate_memories(content):
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT id, content
+        FROM memories
+        ORDER BY created_at DESC
+        """
+    )
+
+    memories = cursor.fetchall()
+
+    conn.close()
+
+    if not memories:
+
+        return []
+    
+    memory_numbers = find_similar_memories(
+        content,
+        memories
+    )
+
+    duplicates = []
+
+    for number in memory_numbers:
+
+        if 1 <= number <= len(memories):
+
+            duplicates.append(
+                memories[number - 1]
+            )
+
+    return duplicates
+
+def answer_from_memories(question):
+
+    memories = retrieve_semantic_memories(question)
+
+    if not memories:
+
+        return None
+
+    answer = reason_over_memories(
+        question,
+        memories
+    )
+
+    return answer, memories

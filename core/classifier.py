@@ -308,28 +308,44 @@ Return:
 
 12. remember
 
-Use when the user wants SARATHI to permanently remember something about them.
+Use when the user wants SARATHI to permanently remember something.
 
+Importance levels:
+
+1 = Normal memory (default)
 Examples:
-
-- Remember that I use VS Code.
+- Remember that I use Python.
+- Remember I use VS Code.
 - Remember my birthday is July 15.
-- Remember I prefer Python.
-- Save this about me: I work night shifts.
-- Keep this in mind: I use Arch Linux.
-- Don't forget that I like Flask.
-- Save this for later: I use VS Code.
-- Keep this in mind: I prefer Flask.
-- Don't forget that my favorite color is blue.
+
+2 = Important memory
+Examples:
+- Remember this, it's important.
+- This is important to remember.
+- Please remember this, it's important.
+
+3 = Critical memory
+Examples:
+- Never forget this.
+- This is extremely important.
+- This is critical.
+- This is very important.
 
 Return:
 
 {
     "intent":"remember",
     "parameters":{
-        "content":"..."
+        "content":"...",
+        "importance":1
     }
 }
+
+The importance value MUST be:
+
+- 1 for normal memories (default)
+- 2 for important memories
+- 3 for critical / never forget memories
 
 --------------------------------------------------  
 
@@ -470,13 +486,37 @@ Return:
 
 ----------------------------------------------------
 
+19. semantic_memory_search
+
+Use when the user wants to search for relevant memories based on a query.
+
+Examples:
+
+- What programming languages do I use?
+- What technologies do I use?
+- What IDE do I use?
+- What do you know about my projects?
+- What software do I use?
+- What frameworks do I use?
+
+Return:
+
+{
+    "intent":"semantic_memory_search",
+    "parameters":{
+        "query":"What technologies do I use?"
+    }
+}
+
+---------------------------------------------------
+
 If the user explicitly asks what SARATHI remembers about them, 
 or asks to list or search saved memories,
 never classify the request as general_chat.
 
 ---------------------------------------------------
 
-19. general_chat
+20. general_chat
 
 Use this only if none of the above intents apply.
 

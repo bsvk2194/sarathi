@@ -3,26 +3,56 @@ from flask import jsonify
 from core.knowledge import (
     remember,
     get_all_memories,
+    retrieve_semantic_memories,
     search_memories,
     forget_memory,
     forget_memories,
     update_memory,
     update_memory_by_id,
-    
+    find_duplicate_memories,
+    answer_from_memories
 )
-from core.memory import get_recent_results,remember_reply, set_pending_action,set_recent_results,clear_pending_action,resolve_recent_reference
 
-def handle_remember(content):
+from core.memory import (get_recent_results,remember_reply, set_pending_action,set_recent_results,
+    clear_pending_action,resolve_recent_reference)
+
+
+def handle_remember(content, importance = 1):
 
     content = content.strip()
+
 
     if content == "":
 
         reply = "Please tell me what you want me to remember."
 
         return remember_reply(reply)
+    
+    duplicates = find_duplicate_memories(content)
 
-    remember(content)
+    if duplicates:
+
+        duplicate_list = ""
+
+        for duplicate in duplicates:
+
+            duplicate_list += f"• {duplicate[1]}\n"
+
+        reply = f"""I already have similar memory(s):
+
+    {duplicate_list}
+
+    I haven't saved this memory to avoid creating duplicates.
+    """
+
+        return remember_reply(reply)
+    
+    remember(
+        content,
+        importance
+    )
+
+    remember(content, importance)
 
     reply = f"I'll remember:\n\n{content}"
 
@@ -203,3 +233,22 @@ After:
 """
 
     return remember_reply(reply)
+
+def handle_retrieve_semantic_memories(query):
+
+    result = answer_from_memories(query)
+
+    if result is None:
+
+        reply = "I couldn't find any relevant memories."
+
+        return remember_reply(reply)
+
+    answer, memories = result
+
+    set_recent_results(
+        "knowledge",
+        memories
+    )
+
+    return remember_reply(answer)
