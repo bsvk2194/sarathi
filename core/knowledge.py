@@ -2,7 +2,7 @@ import sqlite3
 
 from core.config import DATABASE
 from core.backup import create_backup
-from core.llm import find_similar_memories, retrieve_memory_numbers, reason_over_memories
+from core.llm import find_similar_memories, retrieve_memory_numbers, reason_over_memories, find_contradicting_memory_numbers
 
 def remember(content, importance = 1):
 
@@ -271,6 +271,11 @@ def retrieve_semantic_memories(query):
                 memories[number - 1]
             )
 
+    memory_ids = [memory[0] for memory in relevant_memories]
+
+    increment_memory_usage_batch(memory_ids)
+    update_memory_importance_batch(memory_ids)
+
     return relevant_memories
 
 def find_duplicate_memories(content):
@@ -325,3 +330,158 @@ def answer_from_memories(question):
     )
 
     return answer, memories
+
+def increment_memory_usage(memory_id):
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        UPDATE memories
+        SET usage_count = usage_count + 1
+        WHERE id = ?
+        """,
+        (memory_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+def increment_memory_usage_batch(memory_ids):
+
+    if not memory_ids:
+        return
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.executemany(
+        """
+        UPDATE memories
+        SET
+            usage_count = usage_count + 1,
+            last_accessed = CURRENT_TIMESTAMP
+        WHERE id = ?
+        """,
+        [(memory_id,) for memory_id in memory_ids]
+    )
+
+    conn.commit()
+    conn.close()
+
+def update_memory_importance(memory_id):
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT usage_count, importance
+        FROM memories
+        WHERE id = ?
+        """,
+        (memory_id,)
+    )
+
+    result = cursor.fetchone()
+
+    if result is None:
+        conn.close()
+        return
+
+    usage_count, current_importance = result
+
+    if usage_count >= 25:
+        new_importance = 3
+
+    elif usage_count >= 10:
+        new_importance = 2
+
+    else:
+        new_importance = 1
+
+    if new_importance != current_importance:
+
+        cursor.execute(
+            """
+            UPDATE memories
+            SET importance = ?
+            WHERE id = ?
+            """,
+            (new_importance, memory_id)
+        )
+
+        conn.commit()
+
+    conn.close()
+
+def update_memory_importance_batch(memory_ids):
+
+    if not memory_ids:
+        return
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    for memory_id in memory_ids:
+
+        cursor.execute(
+            """
+            SELECT usage_count, importance
+            FROM memories
+            WHERE id = ?
+            """,
+            (memory_id,)
+        )
+
+        result = cursor.fetchone()
+
+        if result is None:
+            continue
+
+        usage_count, current_importance = result
+
+        if usage_count >= 25:
+            new_importance = 3
+
+        elif usage_count >= 10:
+            new_importance = 2
+
+        else:
+            new_importance = 1
+
+        if new_importance != current_importance:
+
+            cursor.execute(
+                """
+                UPDATE memories
+                SET importance = ?
+                WHERE id = ?
+                """,
+                (new_importance, memory_id)
+            )
+
+    conn.commit()
+    conn.close()
+
+def find_contradicting_memories(content):
+
+    memories = retrieve_semantic_memories(content)
+
+    memory_numbers = find_contradicting_memory_numbers(
+        content,
+        memories
+    )
+
+    contradicting_memories = []
+
+    for number in memory_numbers:
+
+        if 1 <= number <= len(memories):
+
+            contradicting_memories.append(
+                memories[number - 1]
+            )
+
+    return contradicting_memories

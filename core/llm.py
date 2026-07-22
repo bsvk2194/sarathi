@@ -261,3 +261,90 @@ def reason_over_memories(question, memories):
     )
 
     return content.strip()
+
+def find_contradicting_memory_numbers(new_memory, memories):
+
+    memory_text = ""
+
+    for i, memory in enumerate(memories, start=1):
+
+        memory_text += f"{i}. {memory[1]}\n"
+
+    prompt = f"""
+    You are a contradiction detection engine.
+
+    Your ONLY job is to identify which memories contradict the new memory.
+
+    Return ONLY a valid JSON array of memory numbers.
+
+    Example:
+
+    [1]
+    [2,4]
+    []
+
+    Rules:
+
+    - Return ONLY contradictions.
+    - Do NOT return duplicates.
+    - Do NOT return related memories.
+    - Do NOT explain your reasoning.
+    - Do NOT use markdown.
+    - Do NOT write anything except the JSON array.
+
+    New Memory:
+
+    {new_memory}
+
+    Existing Memories:
+
+    {memory_text}
+    """
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {
+                "role": "system",
+                "content": prompt
+            },
+            {
+                "role": "user",
+                "content": new_memory
+            }
+        ]
+    }
+
+    response = requests.post(
+        url,
+        headers=headers,
+        json=payload
+    )
+
+    if response.status_code != 200:
+
+        return []
+
+    content = response.json()["choices"][0]["message"]["content"]
+
+    content = (
+        content
+        .replace("```json", "")
+        .replace("```", "")
+        .strip()
+    )
+
+    try:
+
+        return json.loads(content)
+
+    except json.JSONDecodeError:
+
+        return []

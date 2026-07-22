@@ -10,7 +10,8 @@ from core.knowledge import (
     update_memory,
     update_memory_by_id,
     find_duplicate_memories,
-    answer_from_memories
+    answer_from_memories,
+    find_contradicting_memories
 )
 
 from core.memory import (get_recent_results,remember_reply, set_pending_action,set_recent_results,
@@ -47,16 +48,31 @@ def handle_remember(content, importance = 1):
 
         return remember_reply(reply)
     
-    remember(
-        content,
-        importance
-    )
+    contradicting_memories = find_contradicting_memories(content)
 
+    if contradicting_memories:
+
+        contradiction_list = ""
+
+        for i, memory in enumerate(contradicting_memories, start=1):
+
+            contradiction_list += f"{i}. {memory[1]}\n"
+
+        reply = f"""I found memories that may contradict this:
+
+    {contradiction_list}
+
+    I haven't saved this memory.
+    """
+
+        return remember_reply(reply)
+    
     remember(content, importance)
 
     reply = f"I'll remember:\n\n{content}"
 
     return remember_reply(reply)
+
 
 def handle_list_memories():
 

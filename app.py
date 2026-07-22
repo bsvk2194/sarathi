@@ -60,9 +60,13 @@ def init_db():
 
         importance INTEGER DEFAULT 1,
 
+        usage_count INTEGER DEFAULT 0,
+
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+        last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
     )
     """
