@@ -331,7 +331,7 @@ def answer_from_memories(question):
 
     return answer, memories
 
-def increment_memory_usage(memory_id):
+'''def increment_memory_usage(memory_id):
 
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -346,7 +346,7 @@ def increment_memory_usage(memory_id):
     )
 
     conn.commit()
-    conn.close()
+    conn.close()'''
 
 def increment_memory_usage_batch(memory_ids):
 
@@ -370,7 +370,7 @@ def increment_memory_usage_batch(memory_ids):
     conn.commit()
     conn.close()
 
-def update_memory_importance(memory_id):
+'''def update_memory_importance(memory_id):
 
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -414,7 +414,7 @@ def update_memory_importance(memory_id):
 
         conn.commit()
 
-    conn.close()
+    conn.close()'''
 
 def update_memory_importance_batch(memory_ids):
 

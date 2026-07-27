@@ -123,13 +123,46 @@ def find_similar_memories(new_memory, memories):
     prompt = f"""
     You are a semantic duplicate detection engine.
 
-    Your ONLY job is to determine whether the new memory is the same as,
-    or expresses substantially the same information as,
-    one or more existing memories.
+    Your task is to identify ONLY memories that express the exact same fact.
 
-    Return ONLY a valid JSON array containing the matching memory numbers.
+    A memory is a duplicate only if both memories communicate the same underlying fact.
+    If both memories can coexist without contradiction or redundancy, they are NOT duplicates.
+
+    Do NOT mark memories as duplicates simply because they mention the same person, project, object, or topic.
 
     Examples:
+
+    Duplicate:
+    New: SARATHI uses Python.
+    Existing: SARATHI uses Python.
+
+    Duplicate:
+    New: My favorite language is Python.
+    Existing: I like Python the most.
+
+    NOT duplicates:
+    New: SARATHI uses Python.
+    Existing: SARATHI uses Flask.
+
+    NOT duplicates:
+    New: SARATHI uses SQLite.
+    Existing: SARATHI uses Python.
+
+    NOT duplicates:
+    New: My favorite language is Python.
+    Existing: I know Python.
+
+    NOT duplicates:
+    New: I live in Hyderabad.
+    Existing: I work in Hyderabad.
+
+    NOT duplicates:
+    New: My laptop has 16 GB RAM.
+    Existing: My laptop uses an Intel processor.
+
+    Return ONLY a valid JSON array of duplicate memory numbers.
+
+    If none are duplicates, return:
 
     []
 
