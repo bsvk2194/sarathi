@@ -4,6 +4,8 @@ import requests
 from dotenv import load_dotenv
 from flask import jsonify
 from core.memory import remember_reply  
+from core.context import get_context, build_prompt
+from core.memory_policy import should_use_context
 
 load_dotenv()
 
@@ -19,6 +21,21 @@ def handle_general_chat(user_message):
         "Content-Type": "application/json"
     }
 
+    #print(f"Use Context: {should_use_context(user_message)}")
+    
+    if should_use_context(user_message):
+
+        context = get_context(user_message)
+
+        prompt = build_prompt(
+            context,
+            user_message
+        )
+
+    else:
+
+        prompt = user_message
+
     payload = {
         "model": "llama-3.3-70b-versatile",
         "messages": [
@@ -31,7 +48,7 @@ def handle_general_chat(user_message):
             },
             {
                 "role": "user",
-                "content": user_message
+                "content": prompt
             }
         ]
     }

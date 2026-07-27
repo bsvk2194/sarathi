@@ -1,6 +1,5 @@
 import json
 import os
-from wsgiref import headers
 import requests
 
 from dotenv import load_dotenv
@@ -8,6 +7,53 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+def ask_llm(system_prompt, user_prompt="", temperature=0):
+
+    url = "https://api.groq.com/openai/v1/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "temperature": temperature,
+        "messages": [
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": user_prompt
+            }
+        ]
+    }
+
+    try:
+        response = requests.post(
+            url,
+            headers=headers,
+            json=payload
+        )
+
+        response.raise_for_status()
+
+    except requests.RequestException:
+        return None
+
+    content = response.json()["choices"][0]["message"]["content"]
+
+    content = (
+        content
+        .replace("```json", "")
+        .replace("```", "")
+        .strip()
+    )
+
+    return content
 
 def retrieve_memory_numbers(query, memories):
 
@@ -20,7 +66,13 @@ def retrieve_memory_numbers(query, memories):
     prompt = f"""
     You are a semantic memory retrieval engine.
 
-    Your ONLY job is to identify which memories are relevant.
+    Your ONLY job is to identify memories that could help answer the user's request.
+
+    Include:
+    - Directly relevant memories.
+    - Closely related memories that provide useful context.
+
+    Do not include unrelated memories.
 
     Return ONLY a valid JSON array of memory numbers.
 
@@ -44,45 +96,13 @@ def retrieve_memory_numbers(query, memories):
     {memory_text}
     """
 
-    url = "https://api.groq.com/openai/v1/chat/completions"
-
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [
-            {
-                "role": "system",
-                "content": prompt
-            },
-            {
-                "role": "user",
-                "content": query 
-            }
-        ]
-    }
-
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload
+    content = ask_llm(
+        system_prompt=prompt,
+        user_prompt=query
     )
 
-    if response.status_code != 200:
-
+    if content is None:
         return []
-    
-    content = response.json()["choices"][0]["message"]["content"]
-
-    content = (
-        content
-        .replace("```json", "")
-        .replace("```", "")
-        .strip()
-    )
 
     try:
 
@@ -130,45 +150,13 @@ def find_similar_memories(new_memory, memories):
     {memory_text}
     """
 
-    url = "https://api.groq.com/openai/v1/chat/completions"
-
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [
-            {
-                "role": "system",
-                "content": prompt
-            },
-            {
-                "role": "user",
-                "content": new_memory
-            }
-        ]
-    }
-
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload
+    content = ask_llm(
+        system_prompt=prompt,
+        user_prompt=new_memory
     )
 
-    if response.status_code != 200:
-
+    if content is None:
         return []
-    
-    content = response.json()["choices"][0]["message"]["content"]
-
-    content = (
-        content
-        .replace("```json", "")
-        .replace("```", "")
-        .strip()
-    )
 
     try:
 
@@ -206,61 +194,15 @@ def reason_over_memories(question, memories):
     {memory_text}
     """
 
-    url = "https://api.groq.com/openai/v1/chat/completions"
-
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-
-        "model": "llama-3.3-70b-versatile",
-
-        "temperature": 0,
-
-        "messages": [
-
-            {
-
-                "role": "system",
-
-                "content": prompt
-
-            },
-
-            {
-
-                "role": "user",
-
-                "content": question
-
-            }
-
-        ]
-
-    }
-
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload
+    content = ask_llm(
+        system_prompt=prompt,
+        user_prompt=question
     )
 
-    if response.status_code != 200:
-
+    if content is None:
         return "I couldn't reason about your memories right now."
-    
-    content = response.json()["choices"][0]["message"]["content"]
 
-    content = (
-        content
-        .replace("```json", "")
-        .replace("```", "")
-        .strip()
-    )
-
-    return content.strip()
+    return content
 
 def find_contradicting_memory_numbers(new_memory, memories):
 
@@ -301,45 +243,13 @@ def find_contradicting_memory_numbers(new_memory, memories):
     {memory_text}
     """
 
-    url = "https://api.groq.com/openai/v1/chat/completions"
-
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [
-            {
-                "role": "system",
-                "content": prompt
-            },
-            {
-                "role": "user",
-                "content": new_memory
-            }
-        ]
-    }
-
-    response = requests.post(
-        url,
-        headers=headers,
-        json=payload
+    content = ask_llm(
+        system_prompt=prompt,
+        user_prompt=new_memory
     )
 
-    if response.status_code != 200:
-
+    if content is None:
         return []
-
-    content = response.json()["choices"][0]["message"]["content"]
-
-    content = (
-        content
-        .replace("```json", "")
-        .replace("```", "")
-        .strip()
-    )
 
     try:
 
