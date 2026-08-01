@@ -1,4 +1,5 @@
 import json
+import core.knowledge as knowledge
 
 from core.knowledge import retrieve_semantic_memories
 from core.understanding import build_user_model
@@ -61,3 +62,46 @@ def get_knowledge(user_message):
         "prompt_context": prompt_context
 
     }
+
+def remember(*args, **kwargs):
+    return knowledge.remember(*args, **kwargs)
+
+def get_all_memories():
+    return knowledge.get_all_memories()
+
+def search_memories(*args, **kwargs):
+    return knowledge.search_memories(*args, **kwargs)
+
+def forget_memory(*args, **kwargs):
+    return knowledge.forget_memory(*args, **kwargs)
+
+def forget_memories(*args, **kwargs):
+    return knowledge.forget_memories(*args, **kwargs)
+
+def update_memory_by_id(*args, **kwargs):
+    return knowledge.update_memory_by_id(*args, **kwargs)
+
+def update_memory(*args, **kwargs):
+    return knowledge.update_memory(*args, **kwargs)
+
+def retrieve_semantic_memories(*args, **kwargs):
+    return knowledge.retrieve_semantic_memories(*args, **kwargs)
+
+def answer_from_memories(*args, **kwargs):
+    return knowledge.answer_from_memories(*args, **kwargs)
+
+# ---------- Duplicate / Contradiction ----------
+
+def find_duplicate_memories(self, *args, **kwargs):
+    return knowledge.find_duplicate_memories(*args, **kwargs)
+
+def find_contradicting_memories(self, *args, **kwargs):
+    return knowledge.find_contradicting_memories(*args, **kwargs)
+
+# ---------- Metadata ----------
+
+def increment_memory_usage_batch(self, *args, **kwargs):
+    return knowledge.increment_memory_usage_batch(*args, **kwargs)
+
+def update_memory_importance_batch(self, *args, **kwargs):
+    return knowledge.update_memory_importance_batch(*args, **kwargs)

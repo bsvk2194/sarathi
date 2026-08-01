@@ -291,3 +291,52 @@ def find_contradicting_memory_numbers(new_memory, memories):
     except json.JSONDecodeError:
 
         return []
+
+
+def select_tool(user_request, available_tools):
+
+    tool_text = ""
+
+    for tool in available_tools:
+
+        tool_text += f"- {tool}\n"
+
+    prompt = f"""
+    You are SARATHI's tool routing engine.
+
+    Your ONLY job is to determine which tool should handle the user's request.
+
+    Available Tools:
+
+    {tool_text}
+
+    Rules:
+
+    - Return ONLY one tool name.
+    - The tool name MUST exactly match one of the available tools.
+    - If no tool is appropriate, return:
+
+    none
+
+    Do not explain.
+    Do not use markdown.
+    Do not write anything except the tool name.
+    """
+
+    content = ask_llm(
+        system_prompt=prompt,
+        user_prompt=user_request
+    )
+
+    if content is None:
+        return None
+
+    content = content.strip().lower()
+
+    if content == "none":
+        return None
+
+    if content not in available_tools:
+        return None
+
+    return content
