@@ -1,6 +1,9 @@
 import json
 
-from core.llm import ask_llm
+from core.llms.loader import load_llms
+from core.llms.manager import llms
+
+load_llms()
 
 
 def build_user_model(memories):
@@ -20,10 +23,15 @@ def build_user_model(memories):
 
     prompt = build_understanding_prompt(memories)
 
-    response = ask_llm(prompt)
+    response = llms.groq.generate(prompt)
+
+    if not response.success:
+        return {}
+
+    content = response.content
 
     try:
-        return json.loads(response)
+        return json.loads(content)
 
     except json.JSONDecodeError:
 

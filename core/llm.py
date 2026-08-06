@@ -1,59 +1,17 @@
+"""
+LLM Service for SARATHI.
+
+Contains domain-specific prompting and reasoning
+built on top of the LLM provider framework.
+"""
+
+
 import json
-import os
-import requests
+from core.llms.loader import load_llms
+from core.llms.manager import llms
 
-from dotenv import load_dotenv
 
-load_dotenv()
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
-def ask_llm(system_prompt, user_prompt="", temperature=0):
-
-    url = "https://api.groq.com/openai/v1/chat/completions"
-
-    headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "temperature": temperature,
-        "messages": [
-            {
-                "role": "system",
-                "content": system_prompt
-            },
-            {
-                "role": "user",
-                "content": user_prompt
-            }
-        ]
-    }
-
-    try:
-        response = requests.post(
-            url,
-            headers=headers,
-            json=payload
-        )
-
-        response.raise_for_status()
-
-    except requests.RequestException:
-        return None
-
-    content = response.json()["choices"][0]["message"]["content"]
-
-    content = (
-        content
-        .replace("```json", "")
-        .replace("```", "")
-        .strip()
-    )
-
-    return content
+load_llms()
 
 def retrieve_memory_numbers(query, memories):
 
@@ -96,13 +54,15 @@ def retrieve_memory_numbers(query, memories):
     {memory_text}
     """
 
-    content = ask_llm(
-        system_prompt=prompt,
-        user_prompt=query
-    )
+    response = llms.groq.generate(
+    system_prompt=prompt,
+    user_prompt=query
+)
 
-    if content is None:
+    if not response.success:
         return []
+
+    content = response.content
 
     try:
 
@@ -183,13 +143,15 @@ def find_similar_memories(new_memory, memories):
     {memory_text}
     """
 
-    content = ask_llm(
-        system_prompt=prompt,
-        user_prompt=new_memory
-    )
+    response = llms.groq.generate(
+    system_prompt=prompt,
+    user_prompt=new_memory
+)
 
-    if content is None:
+    if not response.success:
         return []
+
+    content = response.content
 
     try:
 
@@ -227,13 +189,15 @@ def reason_over_memories(question, memories):
     {memory_text}
     """
 
-    content = ask_llm(
-        system_prompt=prompt,
-        user_prompt=question
-    )
+    response = llms.groq.generate(
+    system_prompt=prompt,
+    user_prompt=question
+)
 
-    if content is None:
+    if not response.success:
         return "I couldn't reason about your memories right now."
+
+    return response.content
 
     return content
 
@@ -276,13 +240,15 @@ def find_contradicting_memory_numbers(new_memory, memories):
     {memory_text}
     """
 
-    content = ask_llm(
-        system_prompt=prompt,
-        user_prompt=new_memory
-    )
+    response = llms.groq.generate(
+    system_prompt=prompt,
+    user_prompt=new_memory
+)
 
-    if content is None:
+    if not response.success:
         return []
+
+    content = response.content
 
     try:
 
@@ -323,13 +289,15 @@ def select_tool(user_request, available_tools):
     Do not write anything except the tool name.
     """
 
-    content = ask_llm(
-        system_prompt=prompt,
-        user_prompt=user_request
-    )
+    response = llms.groq.generate(
+    system_prompt=prompt,
+    user_prompt=user_request
+)
 
-    if content is None:
+    if not response.success:
         return None
+
+    content = response.content
 
     content = content.strip().lower()
 
