@@ -16,3 +16,8 @@ backups/
 test_gemini.py
 test_groq.py
 test_route.py
+
+plugins/google/token.json
+plugins/google/credentials.json
+
+.venv/
