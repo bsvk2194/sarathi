@@ -1,0 +1,13 @@
+{
+    "id": "gmail",
+    "name": "Gmail Plugin",
+    "version": "1.0.0",
+    "description": "Provides Gmail operations through Google APIs.",
+    "author": "SARATHI",
+    "permissions": [
+        "internet"
+    ],
+    "dependencies": [],
+    "entry": "plugin.py",
+    "class": "GmailPlugin"
+}

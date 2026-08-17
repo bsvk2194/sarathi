@@ -2,7 +2,7 @@ import shutil
 import sqlite3
 import os
 from core.llm import reason_over_memories
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 from core.classifier import classify_intent
 from core.handlers import (handle_latest_note, handle_storage_status, handle_backup_count,
     handle_pending_tasks, handle_complete_task, handle_add_task,
@@ -11,12 +11,17 @@ from core.handlers import (handle_latest_note, handle_storage_status, handle_bac
     handle_create_backup, handle_general_chat)
 from core.backup import (create_backup, cleanup_backups)
 from core.dispatcher import dispatch_intent
-
+from core.plugins.manager import (plugins as plugin_manager)
+from core.plugins.loader import loader
+from core.accounts.account_manager import (account_manager)
 
 app = Flask(__name__)
 
 DATABASE = "sarathi.db"
 LAST_TASK_RESULTS = []
+
+# Load SARATHI plugins
+loader.load_plugins()
 
 # Initialize database
 def init_db():
@@ -148,6 +153,91 @@ def ask_ai():
     return dispatch_intent(
         intent_data,
         user_message
+    )
+
+#accounts route
+@app.route("/accounts")
+def accounts_page():
+
+    bindings = {}
+
+    for plugin_id, account_ids in (
+        account_manager.list_bindings().items()
+    ):
+
+        for account_id in account_ids:
+
+            if account_id not in bindings:
+
+                bindings[account_id] = []
+
+            bindings[account_id].append(
+                plugin_id
+            )
+
+    return render_template(
+        "accounts.html",
+        accounts=account_manager.list_accounts(),
+        bindings=bindings
+    )
+
+# Disconnect account route
+@app.route(
+    "/accounts/disconnect/<account_id>",
+    methods=["POST"]
+)
+def disconnect_account(account_id):
+
+    from core.accounts.account_manager import (
+        account_manager
+    )
+
+    account_manager.disconnect(
+        account_id
+    )
+
+    return redirect(
+        url_for("accounts")
+    )
+
+# Plugins route
+@app.route("/plugins")
+def plugins_page():
+
+    return render_template(
+        "plugins.html",
+        plugins=plugin_manager.list(),
+        account_manager=account_manager
+    )
+
+# Enable plugin route
+@app.route(
+    "/plugins/enable/<plugin_id>",
+    methods=["POST"]
+)
+def enable_plugin(plugin_id):
+
+    plugin_manager.enable(
+        plugin_id
+    )
+
+    return redirect(
+        url_for("plugins_page")
+    )
+
+# Disable plugin route
+@app.route(
+    "/plugins/disable/<plugin_id>",
+    methods=["POST"]
+)
+def disable_plugin(plugin_id):
+
+    plugin_manager.disable(
+        plugin_id
+    )
+
+    return redirect(
+        url_for("plugins_page")
     )
 
 # Create Backup route
@@ -631,7 +721,6 @@ def delete_event(event_id):
     return jsonify({
         "message":"Event deleted"
     })
-
 
 
 # Start server

@@ -1,0 +1,8 @@
+{
+    "plugin_id": "weather",
+    "enabled": true,
+    "settings": {
+        "default_city": "Hyderabad",
+        "units": "metric"
+    }
+}

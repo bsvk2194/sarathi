@@ -1,0 +1,13 @@
+{
+    "id": "calendar",
+    "name": "Calendar Plugin",
+    "version": "1.0.0",
+    "description": "Provides Google Calendar operations through Google APIs.",
+    "author": "SARATHI",
+    "permissions": [
+        "internet"
+    ],
+    "dependencies": [],
+    "entry": "plugin.py",
+    "class": "CalendarPlugin"
+}

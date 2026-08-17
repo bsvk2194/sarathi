@@ -1,0 +1,7 @@
+{
+    "plugin_id": "clock",
+    "enabled": true,
+    "settings": {
+        "time_format": "24h"
+    }
+}

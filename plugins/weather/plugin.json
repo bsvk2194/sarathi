@@ -1,0 +1,13 @@
+{
+    "id": "weather",
+    "name": "Weather",
+    "version": "1.0.0",
+    "author": "SARATHI",
+    "description": "Provides weather information.",
+    "entry": "plugin.py",
+    "class": "WeatherPlugin",
+    "permissions": [
+        "internet"
+    ],
+    "dependencies": []
+}

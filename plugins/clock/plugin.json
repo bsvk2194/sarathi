@@ -1,0 +1,11 @@
+{
+    "id": "clock",
+    "name": "Clock",
+    "version": "1.0.0",
+    "author": "SARATHI",
+    "description": "Provides date and time information.",
+    "entry": "plugin.py",
+    "class": "ClockPlugin",
+    "permissions": [],
+    "dependencies": []
+}

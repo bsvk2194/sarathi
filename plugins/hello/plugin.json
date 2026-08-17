@@ -1,0 +1,11 @@
+{
+    "id": "hello",
+    "name": "Hello Plugin",
+    "version": "1.0.0",
+    "author": "SARATHI",
+    "description": "Example plugin.",
+    "entry": "plugin.py",
+    "class": "HelloPlugin",
+    "permissions": [],
+    "dependencies": []
+}

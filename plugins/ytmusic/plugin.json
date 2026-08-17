@@ -1,0 +1,13 @@
+{
+    "id": "ytmusic",
+    "name": "YouTube Music Plugin",
+    "version": "1.0.0",
+    "description": "Provides YouTube Music search and music information.",
+    "author": "SARATHI",
+    "permissions": [
+        "internet"
+    ],
+    "dependencies": [],
+    "entry": "plugin.py",
+    "class": "YouTubeMusicPlugin"
+}

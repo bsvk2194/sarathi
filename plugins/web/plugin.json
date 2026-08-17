@@ -1,0 +1,13 @@
+{
+    "id": "web",
+    "name": "Web Plugin",
+    "version": "1.0.0",
+    "description": "Searches the web, retrieves news, and extracts webpage content.",
+    "author": "SARATHI",
+    "entry": "plugin.py",
+    "class": "WebPlugin",
+    "permissions": [
+        "internet"
+    ],
+    "dependencies": []
+}

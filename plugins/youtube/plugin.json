@@ -1,0 +1,13 @@
+{
+    "id": "youtube",
+    "name": "YouTube Plugin",
+    "version": "1.0.0",
+    "description": "Provides YouTube search and video information.",
+    "author": "SARATHI",
+    "permissions": [
+        "internet"
+    ],
+    "dependencies": [],
+    "entry": "plugin.py",
+    "class": "YouTubePlugin"
+}
